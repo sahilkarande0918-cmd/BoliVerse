@@ -90,7 +90,11 @@ function splitClauses(toks: Tok[]): Tok[][] {
   for (const c of clauses) {
     if (!c.length) continue
     const standalone = ACTION_CONCEPTS.some((p) => has(c, p))
-    if (!standalone && merged.length) merged[merged.length - 1].push(...c)
+    const prev = merged[merged.length - 1]
+    // "A bridge, tod do" / "पुल, तोड़ दो": an object-only fragment followed by a verb-only one is a single command
+    const verbOnly = has(c, 'V') && !has(c, 'OBJ') && !has(c, 'SCENE')
+    const prevObjOnly = prev && has(prev, 'OBJ') && !has(prev, 'V')
+    if ((!standalone || (verbOnly && prevObjOnly)) && prev) prev.push(...c)
     else merged.push(c)
   }
   return merged

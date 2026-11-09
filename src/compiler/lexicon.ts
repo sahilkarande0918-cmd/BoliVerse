@@ -6,7 +6,7 @@ const L: Record<string, string> = {
   // ---- objects ----
   'OBJ:house': 'house home hut cottage ghar gharon ghr makaan makan makaanon jhopdi jhonpdi jhopadi kutir घर घरों घरे मकान मकानों झोपड़ी झोपडी कुटीर',
   'OBJ:tree': 'tree ped pedh paed pedon vriksh vruksh jhad jhaad zaad jhaade jhaadi पेड़ पेड पेड़ों पेडों वृक्ष झाड झाडे झाड़ झाड़ी',
-  'OBJ:bridge': 'bridge pul pull pool poolh setu brij पुल पूल सेतु ब्रिज',
+  'OBJ:bridge': 'bridge pul pull pool poolh setu brij पुल पूल पुलाला सेतु ब्रिज',
   'OBJ:river': 'river stream nadi nadee nadiya nala nahar canal darya नदी नदि नहर नाला दरिया ओढा',
   'OBJ:road': 'road street path sadak sarak rasta raasta marg सड़क सडक रास्ता रस्ता मार्ग',
   'OBJ:rock': 'rock boulder chattan chattaan dagad khadak चट्टान दगड खडक',
@@ -15,13 +15,13 @@ const L: Record<string, string> = {
   'OBJ:school': 'school vidyalaya shala shaala स्कूल शाळा शाला विद्यालय',
   'OBJ:lamp': 'lamp streetlight street_light lantern diya deepak batti लैंप दिया दिवा दीपक',
   'OBJ:cart': 'cart bullock_cart bailgadi bailgaadi gaadi gadi vehicle car truck बैलगाड़ी बैलगाडी गाड़ी गाडी',
-  'OBJ:mansion': 'mansion villa bungalow haveli mahal palace bangla banglow luxury_house dream_house बंगला बंगले बंगल्यात बंगल्यामध्ये बंगल्याच्या हवेली महल बंगलो मैंशन मेंशन',
+  'OBJ:mansion': 'manson mansan menshan मंशन मैनशन मेंशन mansion villa bungalow haveli mahal palace bangla banglow luxury_house dream_house बंगला बंगले बंगल्यात बंगल्यामध्ये बंगल्याच्या हवेली महल बंगलो मैंशन मेंशन',
   'OBJ:sofa': 'sofa couch sofa_set सोफा सोफ़ा',
   'OBJ:bed': 'bed palang bistar पलंग बिस्तर बेड',
   'OBJ:table': 'table dining_table coffee_table mez मेज टेबल',
-  'OBJ:chandelier': 'chandelier jhoomar jhumar jhumbar झूमर झुंबर',
+  'OBJ:chandelier': 'chandelier jhoomar jhumar jhumbar jumar झूमर झुंबर',
   'OBJ:plant': 'plant plants indoor_plant gamla paudha paudhe kundi पौधा पौधे गमला कुंडी',
-  'OBJ:rug': 'rug carpet kaleen galicha dari कालीन गालिचा दरी',
+  'OBJ:rug': 'calen kalin kaalin kaleen rug carpet galicha dari कालीन गालिचा दरी',
   'X:pool': 'swimming_pool pool_ke_saath with_pool स्विमिंग_पूल',
   'INTERIOR': 'interior walkthrough room rooms kamra kamre कमरा खोली',
   'SCENE:village': 'village gaon gaanv gaav gav gram basti town गाँव गांव गाव ग्राम बस्ती',
@@ -48,7 +48,7 @@ const L: Record<string, string> = {
   'V:paint': 'paint colour color rang rango रंग रंगो रंगवा',
 
   // ---- camera / film ----
-  'CAM': 'camera cam view angle kaimra कैमरा कॅमेरा',
+  'CAM': 'camera cam view angle kaimra कैमरा कॅमेरा कैमरे',
   'REC': 'record recording video export download film shoot rikord रिकॉर्ड वीडियो व्हिडिओ फिल्म',
   'CINE': 'cinematic cinema shot flythrough fly_through sinematic सिनेमैटिक सिनेमॅटिक',
   'FLY': 'fly flying udo udao udaan udte उड़ो उड़ाओ उड़ान उडा',
@@ -62,7 +62,7 @@ const L: Record<string, string> = {
   'OVERVIEW': 'overview whole poora pura pure sara',
 
   // ---- environment ----
-  'TIME:sunset': 'sunset evening dusk golden_hour shaam sham saanjh suryast sandhya sandhyakal शाम सूर्यास्त संध्याकाळ संध्या',
+  'TIME:sunset': 'सनसेट sunset evening dusk golden_hour shaam sham saanjh suryast sandhya sandhyakal शाम सूर्यास्त संध्याकाळ संध्या',
   'TIME:dawn': 'sunrise dawn suryoday pahat bhor सूर्योदय पहाट भोर',
   'TIME:morning': 'morning subah savera sakal सुबह सवेरा सकाळ',
   'TIME:noon': 'noon midday daytime day din dopahar dupar divas दिन दोपहर दुपार दिवस',

@@ -88,9 +88,14 @@ export function buildShot(preset: CameraPreset, w: World, targetId?: string): Sh
 
 const ease = (t: number) => t * t * (3 - 2 * t)
 
-export function poseAt(path: ShotPath, t01: number, cam: THREE.PerspectiveCamera) {
+/** Pose the camera on the shot. Pass the active OrbitControls so its target follows the look point —
+ *  otherwise controls.update() re-aims the camera at a stale target every frame. */
+export function poseAt(path: ShotPath, t01: number, cam: THREE.PerspectiveCamera, controls?: unknown) {
   const k = ease(Math.min(1, Math.max(0, t01)))
+  const look = path.look.getPoint(k)
   cam.position.copy(path.pos.getPoint(k))
-  cam.lookAt(path.look.getPoint(k))
+  cam.lookAt(look)
+  const target = (controls as { target?: THREE.Vector3 } | null)?.target
+  if (target) target.copy(look)
   if (cam.fov !== path.fov) { cam.fov = path.fov; cam.updateProjectionMatrix() }
 }

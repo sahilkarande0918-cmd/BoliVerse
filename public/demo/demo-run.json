@@ -1,0 +1,105 @@
+{
+ "when": "2026-11-09T11:14:19.794Z",
+ "total": 63.002,
+ "audioCodec": "aac",
+ "beats": [
+  {
+   "said": "एक सुंदर भारतीय गाँव बनाओ, बीच में नदी हो, और लकड़ी का पुल हो।",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "एक सुंदर भारतीय गाँव बनाओ। बीच में नदी हो और लकड़ी का पुल हो।",
+   "language": "hi-IN",
+   "sttMs": 393,
+   "providerMs": 181,
+   "ms": 395,
+   "ops": [
+    "CREATE_SCENE",
+    "CREATE_OBJECT",
+    "CREATE_OBJECT"
+   ],
+   "planner": "local"
+  },
+  {
+   "said": "Bridge thoda bada karo, aur sunset kar do.",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "bridge थोड़ा बड़ा करो और sunset कर दो।",
+   "language": "hi-IN",
+   "sttMs": 216,
+   "providerMs": 113,
+   "ms": 217,
+   "ops": [
+    "MODIFY_OBJECT",
+    "SET_TIME_OF_DAY"
+   ],
+   "planner": "local"
+  },
+  {
+   "said": "Ab bridge tod do.",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "A bridge, Tod do.",
+   "language": "en-IN",
+   "sttMs": 187,
+   "providerMs": 104,
+   "ms": 189,
+   "ops": [
+    "DESTROY_STRUCTURE"
+   ],
+   "planner": "local"
+  },
+  {
+   "said": "त्याच जागी दगडी पूल बांधा.",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "क्या त्यागी दगड़ी पुल बांधा?",
+   "language": "hi-IN",
+   "sttMs": 208,
+   "providerMs": 107,
+   "ms": 208,
+   "ops": [
+    "CREATE_OBJECT"
+   ],
+   "planner": "local"
+  },
+  {
+   "said": "Build a luxury mansion with a swimming pool.",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "Build a luxury mansion with a swimming pool.",
+   "language": "en-IN",
+   "sttMs": 206,
+   "providerMs": 107,
+   "ms": 208,
+   "ops": [
+    "CREATE_OBJECT"
+   ],
+   "planner": "local"
+  },
+  {
+   "said": "Mansion ke andar sofa, kaleen aur jhoomar lagao.",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "mansion के अंदर sofa, kaleen और jhoomar लगाओ।",
+   "language": "hi-IN",
+   "sttMs": 241,
+   "providerMs": 145,
+   "ms": 241,
+   "ops": [
+    "CREATE_OBJECT",
+    "CREATE_OBJECT",
+    "CREATE_OBJECT"
+   ],
+   "planner": "local"
+  },
+  {
+   "said": "डाइनिंग टेबल और बेड भी लगाओ, और रात कर दो।",
+   "voice": "Gnani Timbre (synthetic)",
+   "transcript": "dining table और bed भी लगाओ और रात कर दो।",
+   "language": "hi-IN",
+   "sttMs": 213,
+   "providerMs": 128,
+   "ms": 214,
+   "ops": [
+    "CREATE_OBJECT",
+    "CREATE_OBJECT",
+    "SET_TIME_OF_DAY"
+   ],
+   "planner": "local"
+  }
+ ]
+}

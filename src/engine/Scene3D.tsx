@@ -75,11 +75,12 @@ function FilmRecorder({ world }: { world: World }) {
   const busy = useRef(false)
   const realtime = useRef<{ path: ShotPath; start: number; dur: number } | null>(null)
 
+  useEffect(() => { if (import.meta.env.DEV) (window as unknown as { __r3f: RootState }).__r3f = three as RootState }, [three])
   useFrame(({ clock, camera }) => {
     const r = realtime.current
     if (!r) return
     if (r.start < 0) r.start = clock.elapsedTime
-    poseAt(r.path, (clock.elapsedTime - r.start) / r.dur, camera as THREE.PerspectiveCamera)
+    poseAt(r.path, (clock.elapsedTime - r.start) / r.dur, camera as THREE.PerspectiveCamera, three.get().controls)
   })
 
   useEffect(() => {
@@ -118,7 +119,7 @@ function FilmRecorder({ world }: { world: World }) {
           const base = state.clock.elapsedTime
           blob = await encodeFrames({
             canvas: state.gl.domElement, plan, fps, frames, cancelled,
-            renderFrame: (i) => { enforce(); poseAt(path, i / (frames - 1), state.camera as THREE.PerspectiveCamera); state.advance(base + (i + 1) / fps) },
+            renderFrame: (i) => { enforce(); poseAt(path, i / (frames - 1), state.camera as THREE.PerspectiveCamera, state.get().controls); state.advance(base + (i + 1) / fps) },
             onProgress: (p) => set({ progress: p }),
           })
         } else {
