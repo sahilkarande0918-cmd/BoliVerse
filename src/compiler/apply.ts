@@ -121,7 +121,7 @@ function create(w: World, op: Extract<Operation, { action: 'CREATE_OBJECT' | 'BA
     const e: Entity = {
       id, type, pos: pose.pos, rotY: pose.rotY, scale: op.scale ?? (type === 'tree' ? 0.8 + r() * 0.5 : 1),
       material: op.material ?? (type === 'bridge' ? 'wood' : undefined), color: op.color, state: 'intact', gen: 0,
-      meta: { span: pose.span, width: type === 'bridge' ? 3.6 * (op.scale ?? 1) : undefined, variant: Math.floor(r() * 4), seed: Math.floor(r() * 1e6) },
+      meta: { span: pose.span, width: type === 'bridge' ? 3.6 * (op.scale ?? 1) : undefined, variant: Math.floor(r() * 4), seed: Math.floor(r() * 1e6), query: type === 'prop' ? op.asset ?? 'object' : undefined },
     }
     world = { ...w2, entities: [...w2.entities, e] }
     affected.push(id)

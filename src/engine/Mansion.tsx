@@ -6,6 +6,8 @@ import { B, BOX, COLOR_HEX, SHARED, surface } from './Entities'
 import { MANSION_FLOOR as F, footprint } from './spatial'
 import { TEX } from './textures'
 import { type Entity, rng } from './world'
+import { FURNITURE } from './library'
+import { ScannedOr } from './Props'
 
 // Luxury mansion: open-plan glass pavilion. The living/dining ceiling is a downward-facing plane,
 // so it is opaque from inside but aerial cameras look straight into the furnished interior.
@@ -98,7 +100,15 @@ export function Mansion({ e }: { e: Entity }) {
   )
 }
 
+/** Built-in furniture renders as real CC0 scans (Poly Haven); the procedural piece shows while it streams. */
 export function InteriorItem({ e }: { e: Entity }) {
+  const scan = FURNITURE[e.type]
+  if (!scan || e.color) return <ProceduralItem e={e} />
+  const hanging = e.type === 'chandelier'
+  return <group position={[0, hanging ? 0.43 : 0, 0]}><ScannedOr id={scan} align={hanging ? 'top' : 'base'}><group position={[0, hanging ? -0.43 : 0, 0]}><ProceduralItem e={e} /></group></ScannedOr></group>
+}
+
+function ProceduralItem({ e }: { e: Entity }) {
   switch (e.type) {
     case 'sofa': {
       const f = fabric(e.color, '#cbb79c')

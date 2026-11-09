@@ -127,7 +127,9 @@ function roles(toks: Tok[]) {
       if (Math.abs(o.i - r) <= 3 && between.every((t) => STOP.has(t.raw))) o.ref = true
     }
   }
-  if (objs.length && objs.every((o) => o.ref)) objs[0].ref = false
+  // every known object is a reference → the target is an unknown noun ("a barrel near the temple"), unless there is none
+  const unknownNoun = toks.some((t) => !t.c.length && !STOP.has(t.raw) && t.raw !== ',' && !/^\d/.test(t.raw))
+  if (objs.length && objs.every((o) => o.ref) && !unknownNoun) objs[0].ref = false
   // Locatives ("बंगले में कालीन", "बंगल्यात पलंग"): furniture + mansion → the mansion is the container.
   if (objs.some((o) => o.type === 'mansion') && objs.some((o) => INTERIOR_TYPES.includes(o.type))) {
     for (const o of objs) o.ref = o.type === 'mansion'
@@ -293,6 +295,16 @@ function clauseOps(toks: Tok[], ctx: ParseContext, inherited?: string): Operatio
   if (has(toks, 'SCENE:village') && isCreate) return [...ops, { action: 'CREATE_SCENE', template: 'village' }]
   if (has(toks, 'SCENE:forest') && isCreate) return [...ops, { action: 'BATCH_CREATE', objectType: 'tree', count: countOf(toks) ?? 15 }]
 
+  // Anything else the user asks to create ("ek kursi banao", "add a barrel near the temple"): an
+  // explicit create verb + words we don't know → a CC0 library prop searched by those words.
+  if (!target && verbs.includes('create')) {
+    const words = toks.filter((t) => !t.c.length && !STOP.has(t.raw) && !/^\d/.test(t.raw) && t.raw !== ',').map((t) => t.raw).slice(0, 3)
+    if (words.length) {
+      const count = countOf(toks) ?? 1
+      const base = { objectType: 'prop' as const, asset: words.join(' '), placement: placement(toks, 'prop', refs) }
+      return [...ops, count > 1 ? { action: 'BATCH_CREATE', ...base, count: Math.min(12, count) } : { action: 'CREATE_OBJECT', ...base }]
+    }
+  }
   if (target && (color || material) && !isCreate) {
     return [...ops, { action: 'MODIFY_OBJECT', target: sel(), color, material }]
   }

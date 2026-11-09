@@ -3,16 +3,17 @@ import * as THREE from 'three'
 import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber'
 import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
-import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
+import { Bloom, BrightnessContrast, EffectComposer, GodRays, HueSaturation, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { BlendFunction, ToneMappingMode } from 'postprocessing'
 import type { OrbitControls as OrbitImpl } from 'three-stdlib'
 import { type Quality, useStudio } from '../store'
 import { GrassField, Terrain, Water, waterUniforms } from './Terrain'
-import { Atmosphere } from './Atmosphere'
+import { Atmosphere, SUN_MESH } from './Atmosphere'
 import { WorldEntities } from './Entities'
 import { computeRoute } from './traversal'
 import { buildShot, poseAt, villageCentre, type ShotPath } from './shots'
-import { riverX, type World } from './world'
+import { riverX, rng, terrainHeight, type World } from './world'
+import { Shrubs } from './Trees'
 import { footprint } from './spatial'
 import { encodeFrames, pickExport, recordRealtime } from '../video/exporter'
 
@@ -163,13 +164,18 @@ function FpsProbe() {
 // memo: EffectComposer recompiles its merged shader (~1 s) if its children change identity.
 const Effects = memo(function Effects({ quality }: { quality: Quality }) {
   if (quality === 'low') return null
+  const ultra = quality === 'ultra', high = quality === 'high' || ultra
   const fx = [
-    <Bloom key="bloom" mipmapBlur intensity={0.32} luminanceThreshold={0.92} luminanceSmoothing={0.2} />,
+    // sun shafts through trees and buildings; the sun disc is the occlusion source
+    <GodRays key="rays" sun={SUN_MESH} samples={ultra ? 90 : high ? 60 : 32} density={0.96} decay={0.93} weight={0.3} exposure={0.4} clampMax={1} blur />,
+    <Bloom key="bloom" mipmapBlur intensity={high ? 0.35 : 0.28} luminanceThreshold={0.9} luminanceSmoothing={0.2} />,
+    high ? <BrightnessContrast key="bc" brightness={0.0} contrast={0.07} /> : null,
+    high ? <HueSaturation key="hs" saturation={0.07} /> : null,
     <ToneMapping key="tm" mode={ToneMappingMode.ACES_FILMIC} />,
-    <Vignette key="vig" offset={0.32} darkness={0.42} />,
-    <Noise key="grain" opacity={0.018} premultiply blendFunction={BlendFunction.SOFT_LIGHT} />,
+    <Vignette key="vig" offset={0.32} darkness={0.4} />,
+    <Noise key="grain" opacity={0.015} premultiply blendFunction={BlendFunction.SOFT_LIGHT} />,
   ].filter(Boolean) as ReactElement[]
-  return <EffectComposer multisampling={quality === 'high' ? 4 : 0}>{fx}</EffectComposer>
+  return <EffectComposer multisampling={high ? 4 : 0}>{fx}</EffectComposer>
 })
 
 class GLBoundary extends Component<{ children: ReactNode }, { err?: string }> {
@@ -184,8 +190,8 @@ class GLBoundary extends Component<{ children: ReactNode }, { err?: string }> {
   }
 }
 
-const DPR_MAX: Record<Quality, number> = { high: 2, medium: 1.5, low: 1 }
-const STEP_DOWN: Partial<Record<Quality, Quality>> = { high: 'medium', medium: 'low' }
+const DPR_MAX: Record<Quality, number> = { ultra: 2, high: 1.75, medium: 1.5, low: 1 }
+const STEP_DOWN: Partial<Record<Quality, Quality>> = { ultra: 'high', high: 'medium', medium: 'low' }
 
 export const WorldView = memo(function WorldView({ world, quality, paused = false, hero = false }: { world: World; quality: Quality; paused?: boolean; hero?: boolean }) {
   const selectedId = useStudio((s) => s.selectedId)
@@ -196,6 +202,19 @@ export const WorldView = memo(function WorldView({ world, quality, paused = fals
   const structKey = world.entities.filter((e) => e.type !== 'tree' && e.type !== 'rock').length
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const avoid = useMemo(() => world.entities.filter((e) => ['house', 'temple', 'school', 'well', 'mansion'].includes(e.type)).map((e) => [e.pos[0], e.pos[2], e.type === 'mansion' ? 17 : e.type === 'school' ? 8 : 5] as [number, number, number]), [structKey])
+  // shrubs hug building corners (seeded, so a scene always grows the same bushes)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const shrubSpots = useMemo(() => world.entities.filter((e) => e.type === 'house' || e.type === 'temple' || e.type === 'school').flatMap((e) => {
+    const r = rng((e.meta.seed ?? 1) + 3), out: [number, number, number][] = []
+    for (let k = 0; k < 3; k++) {
+      const a = e.rotY + Math.PI * (0.25 + r() * 1.5), d = (e.type === 'school' ? 7 : 4.2) + r() * 1.2
+      const x = e.pos[0] + Math.sin(a) * d, z = e.pos[2] + Math.cos(a) * d
+      out.push([x, Math.max(0, terrainHeight(x, z)), z])
+    }
+    return out
+  }), [structKey])
+  // never auto-downgrade while a video/capture renders frames on purpose slower than real time
+  const capturing = useStudio((s) => s.recording.state === 'recording')
   const maxDpr = hero ? 1.25 : DPR_MAX[quality]
   const [dpr, setDpr] = useState(maxDpr)
   useEffect(() => setDpr(maxDpr), [maxDpr])
@@ -210,10 +229,10 @@ export const WorldView = memo(function WorldView({ world, quality, paused = fals
         gl={{ preserveDrawingBuffer: !hero, powerPreference: 'high-performance', antialias: quality === 'low' || hero }}
         camera={{ position: [78, 58, 96], fov: 40, near: 0.1, far: 3000 }}
         onPointerMissed={() => useStudio.getState().select(null)}
-        onCreated={({ gl }) => { gl.shadowMap.type = THREE.PCFSoftShadowMap }}
+        onCreated={({ gl, camera }) => { gl.shadowMap.type = THREE.PCFSoftShadowMap; camera.layers.enable(1) /* ground cover layer */ }}
       >
         {/* adaptive quality: drop pixel density first, then the quality preset, if frames stay slow */}
-        {!hero && (
+        {!hero && !capturing && (
           <PerformanceMonitor flipflops={3} onDecline={() => setDpr(1)} onIncline={() => setDpr(maxDpr)}
             onFallback={() => {
               const next = STEP_DOWN[useStudio.getState().quality]
@@ -222,13 +241,14 @@ export const WorldView = memo(function WorldView({ world, quality, paused = fals
         )}
         <Suspense fallback={null}>
           <Physics timeStep={1 / 60} paused={paused} gravity={[0, -9.81, 0]}>
-            <Terrain segments={quality === 'high' ? 180 : quality === 'medium' ? 130 : 90} />
+            <Terrain segments={quality === 'ultra' ? 240 : quality === 'high' ? 180 : quality === 'medium' ? 130 : 90} />
             <WorldEntities entities={world.entities} selectedId={hero ? null : selectedId} route={route} />
           </Physics>
-          {quality !== 'low' && world.entities.length > 0 && <GrassField count={hero ? 2500 : quality === 'high' ? 9000 : 4000} avoid={avoid} />}
+          {quality !== 'low' && world.entities.length > 0 && <Shrubs spots={shrubSpots} />}
+          {quality !== 'low' && world.entities.length > 0 && <GrassField count={hero ? 5000 : quality === 'ultra' ? 28000 : quality === 'high' ? 15000 : 8000} avoid={avoid} />}
         </Suspense>
-        {world.entities.some((e) => e.type === 'river') && <Water uniforms={water} />}
-        <Atmosphere env={world.env} quality={quality} water={water} />
+        {world.entities.some((e) => e.type === 'river') && <Water quality={hero ? 'medium' : quality} />}
+        <Atmosphere env={world.env} quality={quality} water={water} hero={hero} />
         {hero ? <><HeroCamera /><PauseWhenHidden /></> : <><CameraDirector world={world} /><FilmRecorder world={world} /><FpsProbe /></>}
         {!hero && <Effects quality={quality} />}
       </Canvas>

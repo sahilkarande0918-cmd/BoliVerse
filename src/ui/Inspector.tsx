@@ -119,7 +119,7 @@ export function Inspector({ onClose }: { onClose?: () => void }) {
             <Choice label="Time of day" value={world.env.time} options={['dawn', 'morning', 'noon', 'sunset', 'night']} onChange={(v) => exec(`time ${v}`, { action: 'SET_TIME_OF_DAY', time: v })} />
             <Choice label="Weather" value={world.env.weather} options={['clear', 'rain', 'fog', 'storm']} onChange={(v) => exec(`weather ${v}`, { action: 'SET_WEATHER', weather: v })} />
             <Choice label="Lighting" value={world.env.lighting} options={['soft', 'cinematic', 'dramatic']} onChange={(v) => exec(`lighting ${v}`, { action: 'SET_LIGHTING', preset: v })} />
-            <Choice label="Render quality" value={quality} options={['low', 'medium', 'high']} onChange={(v) => set({ quality: v })} />
+            <Choice label="Render quality" value={quality} options={['low', 'medium', 'high', 'ultra']} onChange={(v) => set({ quality: v })} />
           </div>
         </Section>
 

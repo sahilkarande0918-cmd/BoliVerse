@@ -8,28 +8,32 @@ import { useStudio } from '../store'
 import { DECK_Y, type Entity, rng, riverSlope, riverX, terrainHeight, WATER_Y } from './world'
 import type { Route } from './traversal'
 import { footprint } from './spatial'
-import { TEX } from './textures'
+import { pbr, uvBox } from './pbr'
+import { Trees } from './Trees'
 import { InteriorItem, Mansion, Rubble } from './Mansion'
+import { Prop } from './Props'
 import { INTERIOR_TYPES } from '../compiler/schema'
 
 // ---------- shared materials (one instance each → cheap, and night glow is one uniform update) ----------
 const std = (color: string, o: THREE.MeshStandardMaterialParameters = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...o })
+// Scanned CC0 PBR sets (src/engine/pbr.ts); tile = metres per texture repeat.
 export const SHARED = {
-  window: std('#2b2520', { emissive: new THREE.Color('#ffae55'), emissiveIntensity: 0 }),
+  window: std('#2a3036', { roughness: 0.08, metalness: 0.5, emissive: new THREE.Color('#ffae55'), emissiveIntensity: 0 }),
   lamp: std('#fff1c8', { emissive: new THREE.Color('#ffc46b'), emissiveIntensity: 0.2 }),
-  door: std('#4a2f1e', { map: TEX.wood }),
-  plinth: std('#8a7f72', { roughness: 0.95, map: TEX.stone }),
-  tile: std('#a2523a', { map: TEX.tiles, roughness: 0.75 }),
-  thatch: std('#a88d55', { roughness: 1, map: TEX.wood }),
-  flat: std('#d6cbb5'),
+  door: pbr('planks', 1.4, { tint: '#8a6a52' }),
+  frame: pbr('planks', 1.2, { tint: '#5a4636' }),
+  plinth: pbr('stone', 1.6, { tint: '#d8d0c4' }),
+  tile: pbr('rooftiles', 1.8),
+  thatch: pbr('ground', 1.6, { tint: '#e2c88e', normal: 1.5 }),
+  flat: pbr('plaster', 2.5, { tint: '#e2dccf' }),
   tank: std('#2c3640', { roughness: 0.5 }),
-  trunk: std('#5a4130', { roughness: 1 }),
-  rock: std('#7d776e', { roughness: 0.95, flatShading: true }),
-  dirt: std('#8c7350', { roughness: 1 }),
+  trunk: pbr('planks', 1.2, { tint: '#7a5a42' }),
+  rock: pbr('rock', 1.6, { tint: '#b9b4ad' }),
+  dirt: pbr('gravel', 2.2, { tint: '#d9c9ad' }),
   sand: std('#e8d7b0'),
   gold: std('#d8a73a', { metalness: 0.85, roughness: 0.3 }),
   saffron: std('#f08a24', { side: THREE.DoubleSide }),
-  white: std('#f2efe6'),
+  white: pbr('plaster', 2.5, { tint: '#f2efe6' }),
   green: std('#2f8a3a'),
   blue: std('#3f67a8'),
   rope: std('#6b5338'),
@@ -41,27 +45,29 @@ export const COLOR_HEX: Record<Color, string> = {
   red: '#b8392e', blue: '#3d68b0', green: '#4c8a3c', yellow: '#e2b93b', white: '#eeeae0', black: '#2a2a2c', orange: '#e27a2c',
   pink: '#de8fa0', brown: '#7a5434', purple: '#7a4fa0', saffron: '#f08a24', indigo: '#3a3f8f',
 }
-const MAT_LOOK: Record<Material, THREE.MeshStandardMaterialParameters> = {
-  wood: { color: '#8a5a35', roughness: 0.85 },
-  stone: { color: '#9c968c', roughness: 0.95 },
-  steel: { color: '#6f7a85', metalness: 0.75, roughness: 0.35 },
-  brick: { color: '#a4533a', roughness: 0.9 },
-  mud: { color: '#9b7a55', roughness: 1 },
+const MAT_LOOK: Partial<Record<Material, THREE.MeshStandardMaterialParameters>> = {
+  steel: { color: '#6f7a85', metalness: 0.8, roughness: 0.32 },
   glass: { color: '#a6d0e0', metalness: 0.1, roughness: 0.05, transparent: true, opacity: 0.55 },
   gold: { color: '#d4a73a', metalness: 0.9, roughness: 0.25 },
 }
-const matCache = new Map<string, THREE.MeshStandardMaterial>()
+const matCache = new Map<string, THREE.Material>()
+/** Wall/structure surface: scanned PBR for natural materials, tinted plaster by default. */
 export function surface(material?: Material, color?: Color, fallback = '#d9a35b') {
   const key = `${material}|${color}|${fallback}`
   let m = matCache.get(key)
   if (!m) {
-    const map = material === 'wood' || material === 'mud' ? TEX.wood : material === 'stone' || material === 'brick' ? TEX.stone : material ? null : TEX.plaster
-    m = std(fallback, { map, ...(material ? MAT_LOOK[material] : { roughness: 0.92 }) })
-    if (color) m.color.set(COLOR_HEX[color])
+    const tint = color ? COLOR_HEX[color] : undefined
+    if (material === 'wood') m = pbr('planks', 1.4, { tint: tint ?? '#c9a27e' })
+    else if (material === 'stone') m = pbr('stone', 1.8, { tint })
+    else if (material === 'brick') m = pbr('brick', 1.3, { tint })
+    else if (material === 'mud') m = pbr('ground', 2, { tint: tint ?? '#c8a77e' })
+    else if (material) { m = std(fallback, MAT_LOOK[material]); if (tint) (m as THREE.MeshStandardMaterial).color.set(tint) }
+    else m = pbr('plaster', 2.4, { tint: lighten(tint ?? fallback) }) // plaster scans are near-white: tint is the paint
     matCache.set(key, m)
   }
   return m
 }
+const lighten = (hex: string) => '#' + new THREE.Color(hex).lerp(new THREE.Color('#ffffff'), 0.18).getHexString()
 
 // ---------- shared geometry ----------
 export const BOX = new THREE.BoxGeometry(1, 1, 1)
@@ -75,8 +81,9 @@ const GABLE = (() => {
 const HIP = new THREE.ConeGeometry(4.3, 2.3, 4, 1)
 HIP.rotateY(Math.PI / 4)
 
+/** Box with metre-scaled UVs (textures keep real-world scale instead of stretching per face). */
 export function B({ p, s, m, r, cast = true }: { p: [number, number, number]; s: [number, number, number]; m: THREE.Material; r?: [number, number, number]; cast?: boolean }) {
-  return <mesh geometry={BOX} position={p} scale={s} rotation={r} material={m} castShadow={cast} receiveShadow />
+  return <mesh geometry={uvBox(s[0], s[1], s[2])} position={p} rotation={r} material={m} castShadow={cast} receiveShadow />
 }
 
 // ---------- spawn animation ----------
@@ -99,6 +106,21 @@ function Pop({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
 // ---------- structures ----------
 const WALLS = ['#d9a35b', '#c46a4a', '#ece4d4', '#5b7db3', '#8fbfa6', '#d98f8a', '#e0c27a']
 
+/** Window: reflective glass in a timber frame, with a stone sill and a small sunshade (chhajja). */
+function Win({ p, side = false, w = 0.8, h = 0.85 }: { p: [number, number, number]; side?: boolean; w?: number; h?: number }) {
+  return (
+    <group position={p} rotation={[0, side ? Math.PI / 2 : 0, 0]}>
+      <B p={[0, 0, 0.02]} s={[w, h, 0.04]} m={SHARED.window} cast={false} />
+      <B p={[0, h / 2 + 0.04, 0.05]} s={[w + 0.16, 0.08, 0.08]} m={SHARED.frame} cast={false} />
+      <B p={[0, -h / 2 - 0.04, 0.06]} s={[w + 0.24, 0.07, 0.16]} m={SHARED.plinth} cast={false} />
+      <B p={[-w / 2 - 0.04, 0, 0.05]} s={[0.08, h + 0.16, 0.08]} m={SHARED.frame} cast={false} />
+      <B p={[w / 2 + 0.04, 0, 0.05]} s={[0.08, h + 0.16, 0.08]} m={SHARED.frame} cast={false} />
+      <B p={[0, 0, 0.045]} s={[0.04, h, 0.03]} m={SHARED.frame} cast={false} />
+      <B p={[0, h / 2 + 0.2, 0.22]} s={[w + 0.5, 0.06, 0.44]} m={SHARED.flat} />
+    </group>
+  )
+}
+
 function House({ e }: { e: Entity }) {
   const v = e.meta.variant ?? 0
   const wall = surface(e.material, e.color, WALLS[(e.meta.seed ?? 0) % WALLS.length])
@@ -108,9 +130,9 @@ function House({ e }: { e: Entity }) {
       <B p={[0, 0.2, 0]} s={[5.6, 0.4, 5.6]} m={SHARED.plinth} />
       <B p={[0, 0.4 + h / 2, 0]} s={[5, h, 5]} m={wall} />
       <B p={[0, 1.4, 2.52]} s={[1.1, 2, 0.08]} m={SHARED.door} cast={false} />
-      <B p={[-1.6, 2, 2.52]} s={[0.8, 0.8, 0.06]} m={SHARED.window} cast={false} />
-      <B p={[1.6, 2, 2.52]} s={[0.8, 0.8, 0.06]} m={SHARED.window} cast={false} />
-      <B p={[2.52, 2, 0]} s={[0.06, 0.8, 0.8]} m={SHARED.window} cast={false} />
+      <Win p={[-1.6, 2, 2.5]} />
+      <Win p={[1.6, 2, 2.5]} />
+      <Win p={[2.5, 2, 0]} side />
       {v === 0 && (
         <group position={[0, 0.4 + h, 0]}>
           <mesh geometry={GABLE} material={wall} castShadow />
@@ -166,7 +188,7 @@ function School({ e }: { e: Entity }) {
       <B p={[0, 2.1, 0]} s={[12, 3.4, 5]} m={wall} />
       <B p={[0, 1, 0]} s={[12.05, 0.6, 5.05]} m={SHARED.blue} />
       <B p={[0, 3.95, 0]} s={[12.6, 0.3, 5.6]} m={SHARED.flat} />
-      {[-4.5, -2.25, 2.25, 4.5].map((x) => <B key={x} p={[x, 2.4, 2.52]} s={[1.2, 1, 0.06]} m={SHARED.window} cast={false} />)}
+      {[-4.5, -2.25, 2.25, 4.5].map((x) => <Win key={x} p={[x, 2.4, 2.5]} w={1.2} h={1} />)}
       <B p={[0, 1.6, 2.52]} s={[1.4, 2.2, 0.08]} m={SHARED.door} cast={false} />
       <B p={[7.5, 3, 2.5]} s={[0.08, 6, 0.08]} m={SHARED.white} />
       <B p={[8.1, 5.6, 2.5]} s={[1.2, 0.25, 0.04]} m={SHARED.saffron} />
@@ -327,40 +349,19 @@ function Debris({ e }: { e: Entity }) {
   )
 }
 
-// ---------- trees (instanced) ----------
-const CANOPY = new THREE.IcosahedronGeometry(1, 1)
-const LEAF = ['#3f6b2c', '#4f7d33', '#5c8a3a', '#355f2a', '#6b8f3e']
-function Trees({ trees, onSelect }: { trees: Entity[]; onSelect: (id: string) => void }) {
-  const groups = [0, 1, 2].map((v) => trees.filter((t) => (t.meta.variant ?? 0) % 3 === v))
-  const dims = [
-    { th: 2.6, tr: 0.22, cy: 3.8, cs: [2.3, 1.8, 2.3] },
-    { th: 5.4, tr: 0.16, cy: 5.7, cs: [2.6, 0.75, 2.6] },
-    { th: 2.0, tr: 0.3, cy: 3.6, cs: [3.1, 2.3, 3.1] },
-  ]
-  return (
-    <>
-      {groups.map((list, v) => !!list.length && (
-        <group key={v}>
-          <Instances limit={Math.max(1, list.length)} geometry={CYL} material={SHARED.trunk} castShadow>
-            {list.map((t) => <Instance key={t.id} position={[t.pos[0], t.pos[1] + (dims[v].th * t.scale) / 2, t.pos[2]]} scale={[dims[v].tr * t.scale, dims[v].th * t.scale, dims[v].tr * t.scale]} />)}
-          </Instances>
-          <Instances limit={Math.max(1, list.length)} geometry={CANOPY} castShadow receiveShadow>
-            <meshStandardMaterial roughness={0.9} flatShading />
-            {list.map((t) => (
-              <Instance key={t.id} position={[t.pos[0], t.pos[1] + dims[v].cy * t.scale, t.pos[2]]} rotation={[0, t.rotY, 0]}
-                scale={dims[v].cs.map((s) => s * t.scale) as [number, number, number]}
-                color={t.color ? COLOR_HEX[t.color] : LEAF[(t.meta.seed ?? 0) % LEAF.length]}
-                onClick={(ev) => { ev.stopPropagation(); onSelect(t.id) }} />
-            ))}
-          </Instances>
-        </group>
-      ))}
-    </>
-  )
-}
-
 // ---------- rocks: dynamic bodies that react to forces ----------
-const ROCK = new THREE.DodecahedronGeometry(0.8, 0)
+const ROCK = (() => {
+  // displaced icosphere → irregular boulder (UVs in metres for the scanned rock texture)
+  const g = new THREE.IcosahedronGeometry(0.8, 3)
+  const p = g.attributes.position as THREE.BufferAttribute, uv = g.attributes.uv as THREE.BufferAttribute
+  for (let i = 0; i < p.count; i++) {
+    const v = new THREE.Vector3().fromBufferAttribute(p, i)
+    const n = Math.sin(v.x * 4.1) * Math.cos(v.z * 3.7) * 0.12 + Math.sin(v.y * 6.3 + v.x * 2) * 0.06
+    v.multiplyScalar(1 + n); p.setXYZ(i, v.x, v.y * 0.8, v.z); uv.setXY(i, v.x + v.z * 0.5, v.y + v.z * 0.5)
+  }
+  g.computeVertexNormals()
+  return g
+})()
 function Rocks({ rocks, onSelect }: { rocks: Entity[]; onSelect: (id: string) => void }) {
   const refs = useRef(new Map<string, RapierRigidBody>())
   const force = useStudio((s) => s.force)
@@ -392,8 +393,11 @@ function Road({ e }: { e: Entity }) {
     const pts = e.meta.points ?? []
     const dense: [number, number][] = []
     for (let i = 0; i < pts.length - 1; i++) for (let t = 0; t < 1; t += 0.25) dense.push([pts[i][0] + (pts[i + 1][0] - pts[i][0]) * t, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * t])
-    const v: number[] = [], idx: number[] = []
+    const v: number[] = [], uv: number[] = [], idx: number[] = []
+    let run = 0
     dense.forEach(([x, z], i) => {
+      if (i) run += Math.hypot(x - dense[i - 1][0], z - dense[i - 1][1])
+      uv.push(-1.6, run, 1.6, run)
       const [nx, nz] = dense[Math.min(i + 1, dense.length - 1)]
       const [px, pz] = dense[Math.max(i - 1, 0)]
       const dx = nx - px, dz = nz - pz, l = Math.hypot(dx, dz) || 1
@@ -403,6 +407,7 @@ function Road({ e }: { e: Entity }) {
     })
     const g = new THREE.BufferGeometry()
     g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3))
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
     g.setIndex(idx)
     g.computeVertexNormals()
     return g
@@ -550,6 +555,7 @@ export function WorldEntities({ entities, selectedId, route }: { entities: Entit
       {entities.map((e) => {
         if (e.type === 'tree' || e.type === 'rock' || e.type === 'river' || e.type === 'cart') return null
         if (e.type === 'road') return <Road key={e.id} e={e} />
+        if (e.type === 'prop') return <Prop key={e.id} e={e} onSelect={select} />
         if (e.type === 'bridge') {
           return e.state === 'intact' ? (
             <RigidBody key={`${e.id}-ok`} type="fixed" colliders={false} position={e.pos} rotation={[0, e.rotY, 0]}>

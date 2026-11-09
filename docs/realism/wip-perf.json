@@ -1,0 +1,11 @@
+{
+ "quality": "medium",
+ "width": 1280,
+ "height": 720,
+ "medianMs": 2.3,
+ "p95Ms": 3.1,
+ "drawCalls": 370,
+ "triangles": 493067,
+ "textures": 35,
+ "geometries": 20
+}

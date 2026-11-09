@@ -3,7 +3,7 @@ import { BANK_D, DECK_Y, type Entity, type World, bridgeEnds, rng, riverSlope, r
 
 // Deterministic spatial solvers. Everything is in metres; +x east, +z south, river runs along z.
 
-const FOOTPRINT: Partial<Record<ObjectType, number>> = { house: 6.5, temple: 9, school: 10, well: 3.5, tree: 2.2, rock: 1.6, lamp: 1, cart: 3, mansion: 30, sofa: 0.1, bed: 0.1, table: 0.1, chandelier: 0.1, plant: 0.1, rug: 0.1 }
+const FOOTPRINT: Partial<Record<ObjectType, number>> = { house: 6.5, temple: 9, school: 10, well: 3.5, tree: 2.2, rock: 1.6, lamp: 1, cart: 3, mansion: 30, sofa: 0.1, bed: 0.1, table: 0.1, chandelier: 0.1, plant: 0.1, rug: 0.1, prop: 2.5 }
 export const footprint = (t: ObjectType) => FOOTPRINT[t] ?? 3
 
 const LAND_MIN_D = BANK_D + 3 // keep buildings off the river banks

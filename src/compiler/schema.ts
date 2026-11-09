@@ -3,7 +3,7 @@ import { z } from 'zod'
 // The allow-listed operation language. Everything the voice/LLM layer produces must parse here,
 // otherwise it is rejected. No code, URLs or shaders can travel through these types.
 
-export const OBJECT_TYPES = ['house', 'tree', 'bridge', 'river', 'road', 'rock', 'temple', 'well', 'school', 'lamp', 'cart', 'mansion', 'sofa', 'bed', 'table', 'chandelier', 'plant', 'rug'] as const
+export const OBJECT_TYPES = ['house', 'tree', 'bridge', 'river', 'road', 'rock', 'temple', 'well', 'school', 'lamp', 'cart', 'mansion', 'sofa', 'bed', 'table', 'chandelier', 'plant', 'rug', 'prop'] as const
 export const INTERIOR_TYPES: readonly string[] = ['sofa', 'bed', 'table', 'chandelier', 'plant', 'rug']
 export const ObjectType = z.enum(OBJECT_TYPES)
 export type ObjectType = z.infer<typeof ObjectType>
@@ -39,6 +39,8 @@ export const Placement = z
 export type Placement = z.infer<typeof Placement>
 
 const props = {
+  /** for objectType 'prop': plain search words for the CC0 model library, e.g. "chair", "barrel" */
+  asset: z.string().max(40).regex(/^[\p{L}\p{N} _-]+$/u).optional(),
   material: Material.optional(),
   color: Color.optional(),
   scale: z.number().min(0.3).max(3).optional(),

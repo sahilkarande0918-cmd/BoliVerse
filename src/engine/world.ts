@@ -15,7 +15,7 @@ export interface Entity {
   /** bumps every destruction so the debris simulation re-spawns deterministically */
   gen: number
   /** type-specific numbers: bridge span/width, house variant, road points … */
-  meta: { span?: number; width?: number; variant?: number; seed?: number; points?: [number, number][] }
+  meta: { span?: number; width?: number; variant?: number; seed?: number; points?: [number, number][]; query?: string }
 }
 
 export type TimeOfDay = 'dawn' | 'morning' | 'noon' | 'sunset' | 'night'

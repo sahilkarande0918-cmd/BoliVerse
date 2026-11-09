@@ -8,7 +8,7 @@ import { idbGet, idbSet } from './persist'
 
 export type Phase = 'idle' | 'listening' | 'transcribing' | 'interpreting' | 'applying' | 'done' | 'error'
 export type Mode = 'build' | 'simulate' | 'film'
-export type Quality = 'high' | 'medium' | 'low'
+export type Quality = 'ultra' | 'high' | 'medium' | 'low'
 
 export interface LogEntry {
   id: number

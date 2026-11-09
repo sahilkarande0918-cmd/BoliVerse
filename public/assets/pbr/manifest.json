@@ -1,0 +1,420 @@
+[
+ {
+  "file": "grass_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/aerial_grass_rock",
+  "title": "Aerial Grass Rock",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "grass_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/aerial_grass_rock",
+  "title": "Aerial Grass Rock",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "grass_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/aerial_grass_rock",
+  "title": "Aerial Grass Rock",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "ground_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_04/forest_ground_04_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/forest_ground_04",
+  "title": "Forest Ground 04",
+  "authors": [
+   "Rob Tuytel",
+   "Rico Cilliers"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "ground_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_04/forest_ground_04_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/forest_ground_04",
+  "title": "Forest Ground 04",
+  "authors": [
+   "Rob Tuytel",
+   "Rico Cilliers"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "ground_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/forest_ground_04/forest_ground_04_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/forest_ground_04",
+  "title": "Forest Ground 04",
+  "authors": [
+   "Rob Tuytel",
+   "Rico Cilliers"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "mud_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_02/brown_mud_02_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/brown_mud_02",
+  "title": "Brown Mud 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "mud_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_02/brown_mud_02_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/brown_mud_02",
+  "title": "Brown Mud 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "mud_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_02/brown_mud_02_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/brown_mud_02",
+  "title": "Brown Mud 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "gravel_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravelly_sand/gravelly_sand_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/gravelly_sand",
+  "title": "Gravelly Sand",
+  "authors": [
+   "Dario Barresi"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "gravel_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravelly_sand/gravelly_sand_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/gravelly_sand",
+  "title": "Gravelly Sand",
+  "authors": [
+   "Dario Barresi"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "gravel_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravelly_sand/gravelly_sand_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/gravelly_sand",
+  "title": "Gravelly Sand",
+  "authors": [
+   "Dario Barresi"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "plaster_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/painted_plaster_wall",
+  "title": "Painted Plaster Wall",
+  "authors": [
+   "Amal Kumar"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "plaster_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/painted_plaster_wall",
+  "title": "Painted Plaster Wall",
+  "authors": [
+   "Amal Kumar"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "plaster_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/painted_plaster_wall",
+  "title": "Painted Plaster Wall",
+  "authors": [
+   "Amal Kumar"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "rooftiles_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_roof_tiles_02/clay_roof_tiles_02_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/clay_roof_tiles_02",
+  "title": "Clay Roof Tiles 02",
+  "authors": [
+   "Amal Kumar"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "rooftiles_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_roof_tiles_02/clay_roof_tiles_02_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/clay_roof_tiles_02",
+  "title": "Clay Roof Tiles 02",
+  "authors": [
+   "Amal Kumar"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "rooftiles_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_roof_tiles_02/clay_roof_tiles_02_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/clay_roof_tiles_02",
+  "title": "Clay Roof Tiles 02",
+  "authors": [
+   "Amal Kumar"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "planks_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/weathered_planks",
+  "title": "Weathered Planks",
+  "authors": [
+   "Dario Barresi",
+   "Dimitrios Savva"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "planks_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/weathered_planks",
+  "title": "Weathered Planks",
+  "authors": [
+   "Dario Barresi",
+   "Dimitrios Savva"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "planks_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/weathered_planks",
+  "title": "Weathered Planks",
+  "authors": [
+   "Dario Barresi",
+   "Dimitrios Savva"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "bark_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/bark_brown_02/bark_brown_02_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/bark_brown_02",
+  "title": "Bark Brown 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "bark_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/bark_brown_02/bark_brown_02_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/bark_brown_02",
+  "title": "Bark Brown 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "bark_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/bark_brown_02/bark_brown_02_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/bark_brown_02",
+  "title": "Bark Brown 02",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "rock_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_face/rock_face_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/rock_face",
+  "title": "Rock Face",
+  "authors": [
+   "Greg Zaal",
+   "Dario Barresi"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "rock_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_face/rock_face_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/rock_face",
+  "title": "Rock Face",
+  "authors": [
+   "Greg Zaal",
+   "Dario Barresi"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "rock_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_face/rock_face_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/rock_face",
+  "title": "Rock Face",
+  "authors": [
+   "Greg Zaal",
+   "Dario Barresi"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "stone_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/stone_wall/stone_wall_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/stone_wall",
+  "title": "Stone Wall",
+  "authors": [
+   "Dario Barresi",
+   "Charlotte Baglioni"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "stone_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/stone_wall/stone_wall_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/stone_wall",
+  "title": "Stone Wall",
+  "authors": [
+   "Dario Barresi",
+   "Charlotte Baglioni"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "stone_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/stone_wall/stone_wall_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/stone_wall",
+  "title": "Stone Wall",
+  "authors": [
+   "Dario Barresi",
+   "Charlotte Baglioni"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "brick_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/red_brick_03/red_brick_03_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/red_brick_03",
+  "title": "Red Brick 03",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "brick_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/red_brick_03/red_brick_03_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/red_brick_03",
+  "title": "Red Brick 03",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "brick_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/red_brick_03/red_brick_03_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/red_brick_03",
+  "title": "Red Brick 03",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "marble_diff.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_diff_1k.jpg",
+  "asset": "https://polyhaven.com/a/marble_01",
+  "title": "Marble 01",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "marble_nor.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_nor_gl_1k.jpg",
+  "asset": "https://polyhaven.com/a/marble_01",
+  "title": "Marble 01",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "marble_arm.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_arm_1k.jpg",
+  "asset": "https://polyhaven.com/a/marble_01",
+  "title": "Marble 01",
+  "authors": [
+   "Rob Tuytel"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "sky_day_1k.hdr",
+  "source": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+  "asset": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+  "title": "Kloofendal 48d Partly Cloudy (Pure Sky)",
+  "authors": [
+   "Greg Zaal",
+   "Jarod Guest"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "sky_day.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/kloofendal_48d_partly_cloudy_puresky.jpg",
+  "asset": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+  "title": "Kloofendal 48d Partly Cloudy (Pure Sky)",
+  "authors": [
+   "Greg Zaal",
+   "Jarod Guest"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "sky_sunset_1k.hdr",
+  "source": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/belfast_sunset_puresky_1k.hdr",
+  "asset": "https://polyhaven.com/a/belfast_sunset_puresky",
+  "title": "Belfast Sunset (Pure Sky)",
+  "authors": [
+   "Greg Zaal",
+   "Dimitrios Savva",
+   "Jarod Guest"
+  ],
+  "license": "CC0 1.0"
+ },
+ {
+  "file": "sky_sunset.jpg",
+  "source": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/belfast_sunset_puresky.jpg",
+  "asset": "https://polyhaven.com/a/belfast_sunset_puresky",
+  "title": "Belfast Sunset (Pure Sky)",
+  "authors": [
+   "Greg Zaal",
+   "Dimitrios Savva",
+   "Jarod Guest"
+  ],
+  "license": "CC0 1.0"
+ }
+]

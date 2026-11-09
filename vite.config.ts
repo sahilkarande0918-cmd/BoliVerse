@@ -11,13 +11,15 @@ function devApi(): Plugin {
       Object.assign(process.env, loadEnv('development', process.cwd(), ''))
       // dev-only: lets the demo director save its rendered film into public/demo/
       server.middlewares.use('/__save', async (req, res) => {
-        const name = new URL(req.url ?? '', 'http://x').searchParams.get('name') ?? ''
-        if (req.method !== 'POST' || !/^(boliverse-demo\.mp4|poster\.jpg|demo-run\.json)$/.test(name)) { res.statusCode = 400; return res.end('bad') }
+        const q = new URL(req.url ?? '', 'http://x').searchParams
+        const name = q.get('name') ?? ''
+        const dir = q.get('dir') === 'realism' ? 'docs/realism' : 'public/demo'
+        if (req.method !== 'POST' || !/^[a-z0-9-]+\.(mp4|jpg|png|json)$/.test(name)) { res.statusCode = 400; return res.end('bad') }
         const chunks: Buffer[] = []
         for await (const c of req) chunks.push(c as Buffer)
         const { mkdirSync, writeFileSync } = await import('node:fs')
-        mkdirSync('public/demo', { recursive: true })
-        writeFileSync(`public/demo/${name}`, Buffer.concat(chunks))
+        mkdirSync(dir, { recursive: true })
+        writeFileSync(`${dir}/${name}`, Buffer.concat(chunks))
         res.end('saved')
       })
       server.middlewares.use(async (req, res, next) => {
