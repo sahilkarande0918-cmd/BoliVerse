@@ -9,7 +9,7 @@ import { riverX } from '../engine/world'
 const W = 1280, H = 720
 const r3f = () => (window as unknown as { __r3f: RootState }).__r3f.get()
 
-export async function captureSet(tag: string, quality: Quality = 'medium', log: (s: string) => void = console.log) {
+export async function captureSet(tag: string, quality: Quality = 'ultra', log: (s: string) => void = console.log) {
   for (let i = 0; i < 100 && !(window as unknown as { __r3f?: RootState }).__r3f; i++) await new Promise((r) => setTimeout(r, 100))
   const st = useStudio
   st.setState({ log: [], past: [], future: [], selectedId: null, mode: 'build', quality })

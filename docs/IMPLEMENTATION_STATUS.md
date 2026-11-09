@@ -16,7 +16,7 @@
 - Sun glare on the river at sunset and the clouds are visible in the Ultra captures and the new film. The god-ray shafts are subtle.
 - Water reflector: verified in the Ultra captures (bridge and tree reflections).
 - Open-vocabulary props (`library.ts`/`Props.tsx`): parser-tested; live Poly Haven load in browser not visually verified.
-- Demo film **re-rendered with High graphics** (62.1 s, 1080p, 55.9 MB, all 7 lines transcribed live by Prisma).
+- Demo film **re-rendered at Ultra quality** (62.2 s, 1080p, 47.1 MB, all 7 lines transcribed live by Prisma).
 - Realism docs written: `docs/REALISM_AUDIT.md`, `docs/RENDERING_DECISIONS.md`, `docs/ASSET_LICENSES.md` (the root ASSETS_LICENSES.md was removed).
 
 ## Known bugs / gaps

@@ -17,4 +17,4 @@ The last user request ("continue … edit that video on dashboard to latest high
 2. Optional polish:
    - p95 frame spikes (first-use shader compiles) could be cut by calling `gl.compile(scene, camera)` after the village spawns.
    - Live Poly Haven prop loading ("ek kursi banao", "add a barrel near the temple") is still not visually verified in the browser.
-3. To re-render the film again: in the studio tab (dev server), run `const m=await import('/src/dev/demoFilm.ts'); m.makeDemoFilm(s=>console.log(s))`. It takes about 6 minutes and makes 14 Gnani calls. The encoder is now capped at 6 Mbps so the file stays under GitHub's 100 MB limit.
+3. The current film is the Ultra render. To re-render it again: in the studio tab (dev server), run `const m=await import('/src/dev/demoFilm.ts'); m.makeDemoFilm(s=>console.log(s), 'ultra')`. It takes about 8 minutes at Ultra and makes 14 Gnani calls. The encoder is now capped at 6 Mbps so the file stays under GitHub's 100 MB limit.

@@ -90,7 +90,7 @@ Notes on limits: each Prisma call is ≤30 s of audio and only one runs at a tim
 
 ## Render quality
 
-The Inspector has a **Low / Medium / High / Ultra** setting. Low: PBR materials, no reflections or grass. Medium: mirror river, grass. High: god rays, 3D clouds, colour grade, MSAA, 2048 shadows. Ultra: 2× pixel ratio, 4096 shadows, denser grass, sharper reflections. Captures and frame timings are in [docs/REALISM_AUDIT.md](docs/REALISM_AUDIT.md).
+The studio renders at **Ultra** by default; the Inspector can lower it to High / Medium / Low on weaker machines. Low: PBR materials, no reflections or grass. Medium: mirror river, grass. High: god rays, 3D clouds, colour grade, MSAA, 2048 shadows. Ultra: 2× pixel ratio, 4096 shadows, denser grass, sharper reflections. Captures and frame timings are in [docs/REALISM_AUDIT.md](docs/REALISM_AUDIT.md).
 
 ## Browser support
 

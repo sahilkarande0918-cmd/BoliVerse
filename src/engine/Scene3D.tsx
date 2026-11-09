@@ -1,7 +1,7 @@
-import { Component, Suspense, memo, useState, useEffect, useMemo, useRef, type ReactElement, type ReactNode } from 'react'
+import { Component, Suspense, memo, useEffect, useMemo, useRef, type ReactElement, type ReactNode } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber'
-import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 import { Bloom, BrightnessContrast, EffectComposer, GodRays, HueSaturation, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { BlendFunction, ToneMappingMode } from 'postprocessing'
@@ -191,7 +191,6 @@ class GLBoundary extends Component<{ children: ReactNode }, { err?: string }> {
 }
 
 const DPR_MAX: Record<Quality, number> = { ultra: 2, high: 1.75, medium: 1.5, low: 1 }
-const STEP_DOWN: Partial<Record<Quality, Quality>> = { ultra: 'high', high: 'medium', medium: 'low' }
 
 export const WorldView = memo(function WorldView({ world, quality, paused = false, hero = false }: { world: World; quality: Quality; paused?: boolean; hero?: boolean }) {
   const selectedId = useStudio((s) => s.selectedId)
@@ -213,11 +212,8 @@ export const WorldView = memo(function WorldView({ world, quality, paused = fals
     }
     return out
   }), [structKey])
-  // never auto-downgrade while a video/capture renders frames on purpose slower than real time
-  const capturing = useStudio((s) => s.recording.state === 'recording')
-  const maxDpr = hero ? 1.25 : DPR_MAX[quality]
-  const [dpr, setDpr] = useState(maxDpr)
-  useEffect(() => setDpr(maxDpr), [maxDpr])
+  // user rule: everything renders at the chosen preset (Ultra by default); no automatic downgrade
+  const dpr = hero ? 1.25 : DPR_MAX[quality]
   return (
     <GLBoundary>
       <Canvas
@@ -231,14 +227,6 @@ export const WorldView = memo(function WorldView({ world, quality, paused = fals
         onPointerMissed={() => useStudio.getState().select(null)}
         onCreated={({ gl, camera }) => { gl.shadowMap.type = THREE.PCFSoftShadowMap; camera.layers.enable(1) /* ground cover layer */ }}
       >
-        {/* adaptive quality: drop pixel density first, then the quality preset, if frames stay slow */}
-        {!hero && !capturing && (
-          <PerformanceMonitor flipflops={3} onDecline={() => setDpr(1)} onIncline={() => setDpr(maxDpr)}
-            onFallback={() => {
-              const next = STEP_DOWN[useStudio.getState().quality]
-              if (next) useStudio.getState().set({ quality: next, message: `Render quality lowered to ${next} to keep the viewport smooth` })
-            }} />
-        )}
         <Suspense fallback={null}>
           <Physics timeStep={1 / 60} paused={paused} gravity={[0, -9.81, 0]}>
             <Terrain segments={quality === 'ultra' ? 240 : quality === 'high' ? 180 : quality === 'medium' ? 130 : 90} />

@@ -92,7 +92,7 @@ export const useStudio = create<State>()((set, get) => ({
   level: 0,
   mode: 'build',
   // medium by default (High is opt-in); phones and ≤4-core machines start on Low. PerformanceMonitor adapts further.
-  quality: typeof navigator !== 'undefined' && ((navigator.hardwareConcurrency ?? 8) <= 4 || (typeof innerWidth !== 'undefined' && innerWidth < 768)) ? 'low' : 'medium',
+  quality: 'ultra', // user rule: everything builds at Ultra (Inspector can still lower it manually)
   paused: false,
   health: null,
   language: 'indic-auto',

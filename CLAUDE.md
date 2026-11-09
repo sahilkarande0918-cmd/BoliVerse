@@ -12,6 +12,7 @@ BoliVerse is a multilingual (English / Hindi / Marathi / Hinglish) voice-control
 - **Ponytail** (Claude Code plugin, user scope, v4.9.0) is mandatory: smallest working diff, stdlib/native first, no speculative abstractions, `ponytail:` comments on deliberate shortcuts.
 - **LLM safety:** Groq is a planner only. All ops must pass the Zod schema in `src/compiler/schema.ts`. Never execute model output as code/URLs/shaders.
 - **Design:** warm editorial "maia.dk" look (beige/ivory/taupe/charcoal, Jost, thin dividers, underline tabs, charcoal block buttons, arch motif). **Do not** revert to the old dark/orange UI.
+- **Quality:** everything builds at **Ultra** by default (store default, demo film, captures). No automatic downgrade; only the Inspector can lower it manually.
 - **3D realism direction:** CC0 PBR (Poly Haven), HDRI skies, mirror water, god rays, procedural trees/grass, CC0 scanned-model library. The live world must stay real, editable, physics-driven 3D.
 
 ## Commands

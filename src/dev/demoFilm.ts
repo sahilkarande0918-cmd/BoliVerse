@@ -7,7 +7,7 @@
 import * as THREE from 'three'
 import type { RootState } from '@react-three/fiber'
 import { AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, QUALITY_HIGH, canEncodeAudio } from 'mediabunny'
-import { useStudio } from '../store'
+import { useStudio, type Quality } from '../store'
 import { speak, transcribe } from '../voice/api'
 import { downsample, encodeWav } from '../voice/audio'
 import { buildShot, poseAt, villageCentre, type ShotPath } from '../engine/shots'
@@ -56,7 +56,7 @@ function wrap(g: CanvasRenderingContext2D, text: string, maxW: number) {
   return lines
 }
 
-export async function makeDemoFilm(log: (s: string) => void = console.log) {
+export async function makeDemoFilm(log: (s: string) => void = console.log, quality: Quality = 'ultra') {
   for (let i = 0; i < 100 && !(window as unknown as { __r3f?: RootState }).__r3f; i++) await new Promise((r) => setTimeout(r, 100))
   if (!(window as unknown as { __r3f?: RootState }).__r3f) throw new Error('Studio renderer not ready — open #/studio first')
   await Promise.all(['300 40px Jost', '400 40px Jost', '500 40px Jost', '400 20px "Geist Mono"'].map((f) => document.fonts.load(f)))
@@ -84,7 +84,7 @@ export async function makeDemoFilm(log: (s: string) => void = console.log) {
 
   // ---- reset world + renderer ----
   const st = useStudio
-  st.setState({ log: [], past: [], future: [], selectedId: null, mode: 'build', quality: 'high' })
+  st.setState({ log: [], past: [], future: [], selectedId: null, mode: 'build', quality })
   st.getState().set({ world: { ...st.getState().world, entities: [], counters: {}, recent: [], template: 'blank', env: { time: 'morning', weather: 'clear', lighting: 'cinematic' } } })
   st.getState().set({ recording: { state: 'recording', progress: 0 } }) // freezes interactive camera director
   await new Promise((r) => setTimeout(r, 400))
@@ -176,7 +176,7 @@ export async function makeDemoFilm(log: (s: string) => void = console.log) {
   await output.finalize()
   const buf = (output.target as BufferTarget).buffer!
   await fetch('/__save?name=boliverse-demo.mp4', { method: 'POST', body: buf })
-  await fetch('/__save?name=demo-run.json', { method: 'POST', body: JSON.stringify({ when: new Date().toISOString(), total, audioCodec: aCodec, beats: prep.map((p, i) => ({ said: p.beat.say, voice: 'Gnani Timbre (synthetic)', transcript: p.transcript, language: p.language, sttMs: Math.round(p.sttMs), providerMs: p.providerMs, ...results[i] })) }, null, 1) })
+  await fetch('/__save?name=demo-run.json', { method: 'POST', body: JSON.stringify({ when: new Date().toISOString(), total, quality, audioCodec: aCodec, beats: prep.map((p, i) => ({ said: p.beat.say, voice: 'Gnani Timbre (synthetic)', transcript: p.transcript, language: p.language, sttMs: Math.round(p.sttMs), providerMs: p.providerMs, ...results[i] })) }, null, 1) })
 
   const s1 = r3f()
   s1.setFrameloop('always'); s1.setSize(prev.w, prev.h, prev.top, prev.left); s1.setDpr(prev.dpr)
