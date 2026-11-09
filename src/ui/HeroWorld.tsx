@@ -13,5 +13,5 @@ export default function HeroWorld() {
     ], null).world
     return { ...w, env: { ...w.env, time: 'sunset' as const } }
   }, [])
-  return <WorldView world={world} quality="medium" hero />
+  return <WorldView world={world} quality={typeof innerWidth !== 'undefined' && innerWidth < 768 ? 'low' : 'medium'} hero />
 }

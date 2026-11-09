@@ -91,7 +91,8 @@ export const useStudio = create<State>()((set, get) => ({
   message: 'Ready — speak or type a command',
   level: 0,
   mode: 'build',
-  quality: typeof navigator !== 'undefined' && (navigator.hardwareConcurrency ?? 8) <= 4 ? 'low' : 'high',
+  // medium by default (High is opt-in); phones and ≤4-core machines start on Low. PerformanceMonitor adapts further.
+  quality: typeof navigator !== 'undefined' && ((navigator.hardwareConcurrency ?? 8) <= 4 || (typeof innerWidth !== 'undefined' && innerWidth < 768)) ? 'low' : 'medium',
   paused: false,
   health: null,
   language: 'indic-auto',

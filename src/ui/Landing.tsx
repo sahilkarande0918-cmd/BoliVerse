@@ -1,4 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
+import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
 import { Icon, Mark, Wordmark } from './Icon'
 
 const HeroWorld = lazy(() => import('./HeroWorld'))
@@ -23,8 +25,29 @@ const STEPS = [
   ['Simulate', 'Edits land as undoable transactions. Rapier physics and a traversal graph play out the consequences.'],
 ]
 
+/** Inertial smooth scrolling for the landing page only (the studio keeps native panel scrolling). */
+function useSmoothScroll() {
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const lenis = new Lenis({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.9 })
+    // smooth in-page anchors (#how, #film…); hash routes like #/studio navigate normally
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null
+      const id = a?.getAttribute('href')?.slice(1)
+      if (!id || id.startsWith('/')) return
+      const el = document.getElementById(id)
+      if (!el) return
+      e.preventDefault()
+      lenis.scrollTo(el, { offset: -16, duration: 1.2 })
+    }
+    document.addEventListener('click', onClick)
+    return () => { document.removeEventListener('click', onClick); lenis.destroy() }
+  }, [])
+}
+
 export function Landing() {
   const live = useLiveHero()
+  useSmoothScroll()
   return (
     <div className="min-h-full bg-[var(--bg)] text-[var(--text)]">
       {/* ---------- hero: editorial column + architectural arch onto the live world ---------- */}

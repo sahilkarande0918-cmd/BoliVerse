@@ -1,7 +1,7 @@
-import { Component, Suspense, memo, useEffect, useMemo, useRef, type ReactElement, type ReactNode } from 'react'
+import { Component, Suspense, memo, useState, useEffect, useMemo, useRef, type ReactElement, type ReactNode } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { BlendFunction, ToneMappingMode } from 'postprocessing'
@@ -184,7 +184,10 @@ class GLBoundary extends Component<{ children: ReactNode }, { err?: string }> {
   }
 }
 
-export function WorldView({ world, quality, paused = false, hero = false }: { world: World; quality: Quality; paused?: boolean; hero?: boolean }) {
+const DPR_MAX: Record<Quality, number> = { high: 2, medium: 1.5, low: 1 }
+const STEP_DOWN: Partial<Record<Quality, Quality>> = { high: 'medium', medium: 'low' }
+
+export const WorldView = memo(function WorldView({ world, quality, paused = false, hero = false }: { world: World; quality: Quality; paused?: boolean; hero?: boolean }) {
   const selectedId = useStudio((s) => s.selectedId)
   const routeKey = world.entities.filter((e) => e.type === 'bridge' || e.type === 'river').map((e) => `${e.id}:${e.state}:${e.pos.join(',')}:${e.meta.span}`).join('|')
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -193,31 +196,55 @@ export function WorldView({ world, quality, paused = false, hero = false }: { wo
   const structKey = world.entities.filter((e) => e.type !== 'tree' && e.type !== 'rock').length
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const avoid = useMemo(() => world.entities.filter((e) => ['house', 'temple', 'school', 'well', 'mansion'].includes(e.type)).map((e) => [e.pos[0], e.pos[2], e.type === 'mansion' ? 17 : e.type === 'school' ? 8 : 5] as [number, number, number]), [structKey])
+  const maxDpr = hero ? 1.25 : DPR_MAX[quality]
+  const [dpr, setDpr] = useState(maxDpr)
+  useEffect(() => setDpr(maxDpr), [maxDpr])
   return (
     <GLBoundary>
       <Canvas
         shadows={quality !== 'low'}
-        flat={quality !== 'low'}
-        dpr={quality === 'high' ? [1, 2] : [1, 1.5]}
-        gl={{ preserveDrawingBuffer: !hero, powerPreference: 'high-performance', antialias: quality === 'low' }}
+        flat={quality !== 'low' && !hero}
+        dpr={dpr}
+        // never re-measure on scroll (that ran layout on every scroll event); debounce real resizes
+        resize={{ scroll: false, debounce: { scroll: 0, resize: 120 } }}
+        gl={{ preserveDrawingBuffer: !hero, powerPreference: 'high-performance', antialias: quality === 'low' || hero }}
         camera={{ position: [78, 58, 96], fov: 40, near: 0.1, far: 3000 }}
         onPointerMissed={() => useStudio.getState().select(null)}
         onCreated={({ gl }) => { gl.shadowMap.type = THREE.PCFSoftShadowMap }}
       >
+        {/* adaptive quality: drop pixel density first, then the quality preset, if frames stay slow */}
+        {!hero && (
+          <PerformanceMonitor flipflops={3} onDecline={() => setDpr(1)} onIncline={() => setDpr(maxDpr)}
+            onFallback={() => {
+              const next = STEP_DOWN[useStudio.getState().quality]
+              if (next) useStudio.getState().set({ quality: next, message: `Render quality lowered to ${next} to keep the viewport smooth` })
+            }} />
+        )}
         <Suspense fallback={null}>
           <Physics timeStep={1 / 60} paused={paused} gravity={[0, -9.81, 0]}>
             <Terrain segments={quality === 'high' ? 180 : quality === 'medium' ? 130 : 90} />
             <WorldEntities entities={world.entities} selectedId={hero ? null : selectedId} route={route} />
           </Physics>
-          {quality !== 'low' && world.entities.length > 0 && <GrassField count={quality === 'high' ? 9000 : 4000} avoid={avoid} />}
+          {quality !== 'low' && world.entities.length > 0 && <GrassField count={hero ? 2500 : quality === 'high' ? 9000 : 4000} avoid={avoid} />}
         </Suspense>
         {world.entities.some((e) => e.type === 'river') && <Water uniforms={water} />}
         <Atmosphere env={world.env} quality={quality} water={water} />
-        {hero ? <HeroCamera /> : <><CameraDirector world={world} /><FilmRecorder world={world} /><FpsProbe /></>}
-        <Effects quality={quality} />
+        {hero ? <><HeroCamera /><PauseWhenHidden /></> : <><CameraDirector world={world} /><FilmRecorder world={world} /><FpsProbe /></>}
+        {!hero && <Effects quality={quality} />}
       </Canvas>
     </GLBoundary>
   )
+})
+
+/** Landing hero: stop rendering entirely while the canvas is scrolled out of view. */
+function PauseWhenHidden() {
+  const { gl, setFrameloop } = useThree()
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => setFrameloop(e.isIntersecting ? 'always' : 'never'), { threshold: 0.02 })
+    io.observe(gl.domElement)
+    return () => io.disconnect()
+  }, [gl, setFrameloop])
+  return null
 }
 
 function HeroCamera() {
