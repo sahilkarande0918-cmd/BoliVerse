@@ -13,7 +13,7 @@ Everything below needs the dev server running: `npm run dev` on :5173, with `GNA
 | 5 | `node scripts/capture.mjs landing` | Real-time screencast of the landing page. |
 | 6 | `node scripts/make-media.mjs` | Builds the frames into the clips in `film/assets/media/`. |
 | 7 | `node scripts/build-film.mjs` | Writes the HyperFrames project (`film/index.html`, `film/compositions/*`) and the SRT, all from `scripts/schedule.mjs`, the one timing source. |
-| 8 | `cd film && npx hyperframes check && npx hyperframes render --quality delivery --video-frame-format png -o renders/boliverse-official-demo.mp4` | Checks and renders the film. |
+| 8 | `cd film && npx hyperframes check && npx hyperframes render --quality delivery --video-frame-format png --frames-cache-dir ../raw/frames-cache -o renders/boliverse-official-demo.mp4` (keep the frames cache on a roomy drive; C: ran out once) | Checks and renders the film. |
 | 9 | `node scripts/master.mjs film/renders/boliverse-official-demo.mp4` | Loudness −16 LUFS / −1.5 dBTP, a probe, and the thumbnail. |
 | 10 | `node scripts/write-docs.mjs` | Script, shot list and verification docs in `deliverables/`. |
 

@@ -1,0 +1,235 @@
+1
+00:00:01,350 --> 00:00:03,822
+What if building a 3D world were as easy as
+
+2
+00:00:03,856 --> 00:00:06,210
+describing it? Meet BoliVerse.
+
+3
+00:00:07,350 --> 00:00:10,735
+BoliVerse is a voice controlled 3D studio.
+
+4
+00:00:10,769 --> 00:00:13,401
+Instead of modelling every object by hand,
+
+5
+00:00:13,434 --> 00:00:15,374
+you describe a world in Hindi,
+
+6
+00:00:15,408 --> 00:00:17,774
+Marathi, English or Hinglish,
+
+7
+00:00:17,808 --> 00:00:19,970
+and keep editing it as you speak.
+
+8
+00:00:21,050 --> 00:00:22,217
+Speak on the left.
+
+9
+00:00:22,250 --> 00:00:24,537
+Your world appears in the centre.
+
+10
+00:00:24,570 --> 00:00:27,177
+The Inspector on the right shows every object
+
+11
+00:00:27,210 --> 00:00:28,457
+and the environment.
+
+12
+00:00:28,490 --> 00:00:29,657
+Let's build something new,
+
+13
+00:00:29,690 --> 00:00:31,270
+from an empty scene.
+
+14
+00:00:31,833 --> 00:00:34,917
+[Builder, Hindi] एक नदी बनाओ और बीस पेड़ लगाओ।
+(Make a river, and plant twenty trees.)
+
+15
+00:00:36,317 --> 00:00:38,903
+Gnani Prisma turns the speech into text.
+
+16
+00:00:38,937 --> 00:00:42,043
+BoliVerse compiles it into structured commands,
+
+17
+00:00:42,077 --> 00:00:43,883
+a river and twenty trees,
+
+18
+00:00:43,917 --> 00:00:45,243
+and builds a real,
+
+19
+00:00:45,277 --> 00:00:46,697
+editable scene.
+
+20
+00:00:48,167 --> 00:00:52,523
+[Builder, Hindi] नदी के पास एक मंदिर बनाओ और मंदिर के पास पाँच lamp लगाओ।
+(Build a temple near the river, and put five lamps near the temple.)
+
+21
+00:00:53,917 --> 00:00:56,603
+Places are understood relative to what already
+
+22
+00:00:56,637 --> 00:00:59,323
+exists. The temple sits beside the river,
+
+23
+00:00:59,357 --> 00:01:01,497
+and the lamps gather around it.
+
+24
+00:01:02,567 --> 00:01:06,275
+[Builder, Marathi] नदीवर दगडी पूल बांधा आणि सूर्योदय करा.
+(Build a stone bridge over the river, and make it sunrise.)
+
+25
+00:01:07,683 --> 00:01:09,170
+That was Marathi.
+
+26
+00:01:09,203 --> 00:01:11,010
+A stone bridge spans the river,
+
+27
+00:01:11,043 --> 00:01:13,423
+and the sky turns to sunrise.
+
+28
+00:01:14,900 --> 00:01:17,984
+[Builder, English] Put a wooden bench near the temple.
+
+29
+00:01:19,383 --> 00:01:22,150
+Anything outside the core vocabulary is searched
+
+30
+00:01:22,183 --> 00:01:25,043
+in a free library of scanned 3D models.
+
+31
+00:01:26,533 --> 00:01:28,249
+[Builder, Hindi] मंदिर को लाल करो।
+(Make the temple red.)
+
+32
+00:01:29,650 --> 00:01:31,457
+Edits change the same object,
+
+33
+00:01:31,490 --> 00:01:34,350
+and every step can be undone or redone.
+
+34
+00:01:35,433 --> 00:01:36,909
+[Builder, Hindi] बारिश शुरू करो।
+(Start the rain.)
+
+35
+00:01:38,317 --> 00:01:41,243
+Weather and time of day change the light,
+
+36
+00:01:41,277 --> 00:01:43,897
+the sky, and even the wet ground.
+
+37
+00:01:46,067 --> 00:01:48,263
+[Builder, Hindi] अब bridge तोड़ दो।
+(Now break the bridge.)
+
+38
+00:01:49,650 --> 00:01:50,648
+In Simulate mode,
+
+39
+00:01:50,681 --> 00:01:52,636
+Rapier physics breaks the bridge into real
+
+40
+00:01:52,670 --> 00:01:55,624
+debris, and the route system marks the crossing
+
+41
+00:01:55,657 --> 00:01:56,670
+as blocked.
+
+42
+00:01:58,733 --> 00:02:01,961
+[Builder, Hindi] steel bridge वापस बनाओ और sunset कर दो।
+(Rebuild the bridge in steel, and make it sunset.)
+
+43
+00:02:03,350 --> 00:02:05,427
+One sentence rebuilds it in steel,
+
+44
+00:02:05,460 --> 00:02:06,453
+in the same place,
+
+45
+00:02:06,486 --> 00:02:08,290
+and the route opens again.
+
+46
+00:02:10,533 --> 00:02:14,649
+[Builder, Hindi] cinematic camera से मंदिर दिखाओ। आठ second का video बनाओ।
+(Show the temple with a cinematic camera; make an eight-second video.)
+
+47
+00:02:16,050 --> 00:02:18,233
+Film mode moves a camera through the same
+
+48
+00:02:18,266 --> 00:02:20,549
+live world, and exports an MP4,
+
+49
+00:02:20,583 --> 00:02:22,350
+right in the browser.
+
+50
+00:02:23,383 --> 00:02:24,151
+Under the hood:
+
+51
+00:02:24,184 --> 00:02:26,150
+Gnani Prisma for speech,
+
+52
+00:02:26,183 --> 00:02:28,248
+a multilingual command compiler with Groq
+
+53
+00:02:28,282 --> 00:02:30,775
+as a fallback, validated commands,
+
+54
+00:02:30,808 --> 00:02:33,384
+Three.js, Rapier physics,
+
+55
+00:02:33,418 --> 00:02:35,763
+and Gnani Timbre for spoken replies.
+
+56
+00:02:37,597 --> 00:02:39,737
+BoliVerse. Your words,
+
+57
+00:02:39,770 --> 00:02:40,537
+your world.
