@@ -22,6 +22,7 @@ export interface LogEntry {
   notes: string[]
   errors: string[]
   affected: string[]
+  /** stt: Gnani round trip · parse: local/Groq planning · apply: world transaction · total: speech end → world applied · frame: render of first frame after apply (separate) */
   t: { stt?: number; parse?: number; apply?: number; frame?: number; total?: number }
   status: 'pending' | 'ok' | 'partial' | 'error'
 }
@@ -174,17 +175,19 @@ export const useStudio = create<State>()((set, get) => ({
     if (firstNew && world.entities.some((e) => e.id === firstNew)) set({ selectedId: firstNew })
 
     for (const fx of effects) handleEffect(fx)
-    const applyMs = performance.now() - ta
+    const applyEnd = performance.now()
+    const applyMs = applyEnd - ta
 
     const editedSomething = ops.some((o) => ACTIONS_THAT_EDIT.has(o.action)) && !errors.length
     const status: LogEntry['status'] = errors.length ? (affected.length || effects.length ? 'partial' : 'error') : 'ok'
-    patch({ normalized: local.normalized, planner, ops, notes, errors, affected, status, t: { parse: parseMs, apply: applyMs } })
+    // total = end of speech (or submit) → world state applied. Rendering is measured separately.
+    patch({ normalized: local.normalized, planner, ops, notes, errors, affected, status, t: { parse: parseMs, apply: applyMs, total: applyEnd - t0 } })
     set({ phase: status === 'error' ? 'error' : 'done', message: errors[0] ?? notes[0] ?? (editedSomething ? 'World updated' : 'Done') })
 
     // first visible frame after the state change
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const now = performance.now()
-      patch({ t: { frame: now - ta, total: now - t0 + (extra.stt ?? 0) } })
+      patch({ t: { frame: now - applyEnd } })
     }))
     if (get().speakReplies && get().health?.gnani && status !== 'error') void say(ops, extra.language)
   },
@@ -262,3 +265,5 @@ async function say(ops: Operation[], lang?: string) {
     useStudio.getState().set({ message: `Timbre voice reply failed: ${(e as Error).message}` })
   }
 }
+
+if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __studio: typeof useStudio }).__studio = useStudio

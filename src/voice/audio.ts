@@ -8,7 +8,7 @@ export interface Capture {
   cancel(): void
 }
 
-export async function startCapture(opts: { onLevel: (rms: number) => void; onAutoStop: () => void; maxMs?: number }): Promise<Capture> {
+export async function startCapture(opts: { onLevel: (rms: number, samples: Float32Array) => void; onAutoStop: () => void; maxMs?: number }): Promise<Capture> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } })
   const ctx = new AudioContext()
   const url = URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' }))
@@ -26,7 +26,7 @@ export async function startCapture(opts: { onLevel: (rms: number) => void; onAut
     let s = 0
     for (const v of e.data) s += v * v
     const rms = Math.sqrt(s / e.data.length)
-    opts.onLevel(rms)
+    opts.onLevel(rms, e.data)
     const now = performance.now()
     if (rms > 0.025) { spoke = true; silentSince = 0 }
     else if (spoke) {

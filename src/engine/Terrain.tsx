@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { RigidBody } from '@react-three/rapier'
-import { BANK_D, riverX, terrainHeight, WATER_Y } from './world'
+import { BANK_D, riverX, rng, terrainHeight, WATER_Y } from './world'
+import { TEX } from './textures'
 
 const SIZE = 300
 
@@ -11,8 +12,8 @@ export function Terrain({ segments }: { segments: number }) {
     g.rotateX(-Math.PI / 2)
     const pos = g.attributes.position as THREE.BufferAttribute
     const colors = new Float32Array(pos.count * 3)
-    const grassA = new THREE.Color('#5f7a3a'), grassB = new THREE.Color('#7c8a45'), dry = new THREE.Color('#a08a5a')
-    const sand = new THREE.Color('#b59f78'), mud = new THREE.Color('#4b3b2a'), c = new THREE.Color()
+    const grassA = new THREE.Color('#4d6b2c'), grassB = new THREE.Color('#6f8038'), dry = new THREE.Color('#8f7d52')
+    const sand = new THREE.Color('#a8926c'), mud = new THREE.Color('#3b3024'), c = new THREE.Color()
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), z = pos.getZ(i)
       const y = terrainHeight(x, z)
@@ -32,7 +33,7 @@ export function Terrain({ segments }: { segments: number }) {
   return (
     <RigidBody type="fixed" colliders="trimesh" name="terrain">
       <mesh geometry={geo} receiveShadow>
-        <meshStandardMaterial vertexColors roughness={0.97} metalness={0} />
+        <meshStandardMaterial vertexColors map={TEX.grass} roughness={0.95} metalness={0} />
       </mesh>
     </RigidBody>
   )
@@ -63,12 +64,12 @@ const waterFrag = /* glsl */ `
     float fres = pow(1.0 - max(dot(n, v), 0.0), 3.0);
     float edge = smoothstep(0.0, 0.35, min(vUv.x, 1.0 - vUv.x));
     vec3 col = mix(uShallow, uDeep, edge);
-    col = mix(col, uSky, fres * 0.75);
+    col = mix(col, uSky, 0.12 + fres * 0.7);
     vec3 r = reflect(-uSunDir, n);
     col += uSunColor * pow(max(dot(r, v), 0.0), 120.0) * 2.5;
     float foam = smoothstep(0.82, 1.0, h(p * 1.7)) * (1.0 - edge) * 0.35;
     col += foam;
-    gl_FragColor = vec4(col, 0.88);
+    gl_FragColor = vec4(col, 0.92);
     #include <fog_fragment>
   }`
 
@@ -78,8 +79,8 @@ export function waterUniforms() {
     uSunDir: { value: new THREE.Vector3(0.3, 0.8, 0.2) },
     uSunColor: { value: new THREE.Color('#fff2d8') },
     uSky: { value: new THREE.Color('#9fc0dc') },
-    uDeep: { value: new THREE.Color('#1d4b5a') },
-    uShallow: { value: new THREE.Color('#4f8a86') },
+    uDeep: { value: new THREE.Color('#123845') },
+    uShallow: { value: new THREE.Color('#3f7a72') },
     uRain: { value: 0 },
     ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog),
   }
@@ -109,4 +110,40 @@ export function Water({ uniforms }: { uniforms: ReturnType<typeof waterUniforms>
       <shaderMaterial vertexShader={waterVert} fragmentShader={waterFrag} uniforms={uniforms} transparent fog depthWrite={false} />
     </mesh>
   )
+}
+
+// ---------- instanced grass tufts (self-made geometry; skipped on Low) ----------
+export function GrassField({ count, avoid }: { count: number; avoid: [number, number, number][] }) {
+  const mesh = useMemo(() => {
+    const blade = new THREE.BufferGeometry()
+    const v: number[] = []
+    for (let k = 0; k < 3; k++) {
+      const a = (k / 3) * Math.PI, cx = Math.cos(a) * 0.18, cz = Math.sin(a) * 0.18
+      v.push(-cx, 0, -cz, cx, 0, cz, 0, 0.55, 0)
+    }
+    blade.setAttribute('position', new THREE.Float32BufferAttribute(v, 3))
+    blade.computeVertexNormals()
+    const mat = new THREE.MeshStandardMaterial({ color: '#ffffff', side: THREE.DoubleSide, roughness: 1 })
+    const im = new THREE.InstancedMesh(blade, mat, count)
+    const r = rng(91)
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color()
+    let n = 0
+    for (let tries = 0; n < count && tries < count * 4; tries++) {
+      const z = (r() - 0.5) * 170, side = r() < 0.5 ? -1 : 1
+      const d = BANK_D + 0.5 + r() * 60, x = riverX(z) + side * d
+      if (Math.abs(d - 15) < 2.4) continue
+      if (avoid.some(([ax, az, rad]) => (ax - x) ** 2 + (az - z) ** 2 < rad * rad)) continue
+      const y = terrainHeight(x, z)
+      if (y < WATER_Y + 0.3) continue
+      const s = 0.6 + r() * 1.1
+      m.compose(new THREE.Vector3(x, y, z), q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), r() * 6.28), new THREE.Vector3(s, s * (0.7 + r() * 0.8), s))
+      im.setMatrixAt(n, m)
+      im.setColorAt(n, col.setHSL(0.19 + r() * 0.06, 0.5, 0.13 + r() * 0.08))
+      n++
+    }
+    im.count = n
+    im.receiveShadow = true
+    return im
+  }, [count, avoid])
+  return <primitive object={mesh} />
 }

@@ -58,6 +58,7 @@ export const Operation = z.discriminatedUnion('action', [
     target: Selector,
     move: z.object({ direction: z.enum(['left', 'right', 'forward', 'back', 'up', 'down']), meters: z.number().min(0).max(40) }).strict().optional(),
     rotateDeg: z.number().min(-360).max(360).optional(),
+    to: z.tuple([z.number().min(-90).max(90), z.number().min(-90).max(90)]).optional(),
   }).strict(),
   z.object({ action: z.literal('DUPLICATE_OBJECT'), target: Selector, count: z.number().int().min(1).max(20).optional() }).strict(),
   z.object({ action: z.literal('DELETE_OBJECT'), target: Selector }).strict(),
@@ -84,6 +85,8 @@ export type Action = Operation['action']
 export const Plan = z.object({ operations: z.array(Operation).max(12) }).strict()
 export type Plan = z.infer<typeof Plan>
 
+const REQUIRED = new Set(['action', 'objectType', 'target', 'count', 'template', 'weather', 'preset', 'time', 'view', 'question'])
+
 /** Validate untrusted input (LLM output). Drops invalid ops individually and reports why. */
 export function validatePlan(raw: unknown): { ops: Operation[]; rejected: string[] } {
   const list = (raw as { operations?: unknown })?.operations
@@ -91,7 +94,18 @@ export function validatePlan(raw: unknown): { ops: Operation[]; rejected: string
   const ops: Operation[] = []
   const rejected: string[] = []
   for (const item of list.slice(0, 12)) {
-    const r = Operation.safeParse(stripNulls(item))
+    let cand = stripNulls(item) as Record<string, unknown>
+    let r = Operation.safeParse(cand)
+    // Repair: drop invalid OPTIONAL top-level fields (e.g. an unknown placement relation) and retry.
+    // Required fields are never dropped, and nothing is invented.
+    for (let tries = 0; !r.success && tries < 3 && cand && typeof cand === 'object'; tries++) {
+      const key = r.error.issues[0]?.path[0]
+      if (typeof key !== 'string' || REQUIRED.has(key) || !(key in cand)) break
+      const { [key]: _drop, ...rest } = cand
+      void _drop
+      cand = rest
+      r = Operation.safeParse(cand)
+    }
     if (r.success) ops.push(r.data)
     else rejected.push(`${(item as { action?: string })?.action ?? '?'}: ${r.error.issues[0]?.message}`)
   }

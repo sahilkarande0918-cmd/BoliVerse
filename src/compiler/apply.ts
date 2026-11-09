@@ -171,7 +171,7 @@ export function applyOperation(w: World, op: Operation, selectedId: string | nul
       const d: Record<string, [number, number, number]> = { left: [-1, 0, 0], right: [1, 0, 0], forward: [0, 0, -1], back: [0, 0, 1], up: [0, 1, 0], down: [0, -1, 0] }
       const world = mapTargets(w, ids, (e) => {
         const v = m ? d[m.direction] : [0, 0, 0]
-        const x = e.pos[0] + v[0] * (m?.meters ?? 0), z = e.pos[2] + v[2] * (m?.meters ?? 0)
+        const x = op.to ? op.to[0] : e.pos[0] + v[0] * (m?.meters ?? 0), z = op.to ? op.to[1] : e.pos[2] + v[2] * (m?.meters ?? 0)
         const y = e.type === 'bridge' ? e.pos[1] : v[1] ? e.pos[1] + v[1] * (m?.meters ?? 0) : Math.max(0, terrainHeight(x, z))
         return { ...e, pos: [x, y, z], rotY: e.rotY + ((op.rotateDeg ?? 0) * Math.PI) / 180 }
       })

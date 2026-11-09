@@ -1,23 +1,24 @@
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Sky, Stars } from '@react-three/drei'
+import { Environment, Lightformer, Sky, Stars } from '@react-three/drei'
 import type { Sky as SkyImpl } from 'three-stdlib'
 import type { World } from './world'
 import type { Quality } from '../store'
 import { SHARED } from './Entities'
 import type { waterUniforms } from './Terrain'
 
-interface Look { elev: number; azim: number; sun: string; sunI: number; sky: string; ground: string; hemiI: number; fog: string; fogD: number; night: number; turb: number }
+interface Look { elev: number; azim: number; sun: string; sunI: number; sky: string; ground: string; hemiI: number; fog: string; fogD: number; night: number; turb: number; env: number }
+// Calibrated for ACES: a cool sky fill keeps shadows readable; sunset warms the key light, not the whole frame.
 const TIMES: Record<World['env']['time'], Look> = {
-  dawn: { elev: 5, azim: 100, sun: '#ffb37a', sunI: 1.6, sky: '#a8b9d8', ground: '#4a3a2a', hemiI: 0.55, fog: '#d9b49a', fogD: 0.0045, night: 0.35, turb: 8 },
-  morning: { elev: 32, azim: 120, sun: '#fff0d6', sunI: 3.0, sky: '#bcd6ff', ground: '#5a4a35', hemiI: 0.75, fog: '#c7d5e2', fogD: 0.0026, night: 0, turb: 4 },
-  noon: { elev: 70, azim: 160, sun: '#ffffff', sunI: 3.4, sky: '#c4dcff', ground: '#5d4d38', hemiI: 0.85, fog: '#d3e1ee', fogD: 0.0024, night: 0, turb: 3 },
-  sunset: { elev: 3.5, azim: 255, sun: '#ff8238', sunI: 2.6, sky: '#f0a070', ground: '#3a2418', hemiI: 0.5, fog: '#e39a6c', fogD: 0.0042, night: 0.45, turb: 10 },
-  night: { elev: -14, azim: 300, sun: '#8ea6ff', sunI: 0.45, sky: '#1f2a4a', ground: '#07080c', hemiI: 0.28, fog: '#0d1322', fogD: 0.0065, night: 1, turb: 2 },
+  dawn: { elev: 7, azim: 95, sun: '#ffc79e', sunI: 2.4, sky: '#9fb3d6', ground: '#3d3428', hemiI: 0.45, fog: '#c6c2c4', fogD: 0.0026, night: 0.2, turb: 5, env: 0.45 },
+  morning: { elev: 35, azim: 125, sun: '#fff3e2', sunI: 3.3, sky: '#a9c8f0', ground: '#4b4030', hemiI: 0.5, fog: '#c3d2e2', fogD: 0.0017, night: 0, turb: 3, env: 0.8 },
+  noon: { elev: 66, azim: 160, sun: '#ffffff', sunI: 3.6, sky: '#b3d0f5', ground: '#4f4433', hemiI: 0.55, fog: '#cddcec', fogD: 0.0015, night: 0, turb: 2.5, env: 1 },
+  sunset: { elev: 7, azim: 250, sun: '#ffb070', sunI: 3.0, sky: '#8095c2', ground: '#3a2a20', hemiI: 0.42, fog: '#b6aaa8', fogD: 0.002, night: 0.3, turb: 4.5, env: 0.5 },
+  night: { elev: -14, azim: 300, sun: '#a9bcff', sunI: 0.7, sky: '#24324f', ground: '#0a0b10', hemiI: 0.32, fog: '#0e1424', fogD: 0.0032, night: 1, turb: 2, env: 0.12 },
 }
 
-interface Live { dir: THREE.Vector3; sun: THREE.Color; sunI: number; sky: THREE.Color; ground: THREE.Color; hemiI: number; fog: THREE.Color; fogD: number; night: number; rain: number; turb: number }
+interface Live { dir: THREE.Vector3; sun: THREE.Color; sunI: number; sky: THREE.Color; ground: THREE.Color; hemiI: number; fog: THREE.Color; fogD: number; night: number; rain: number; turb: number; env: number }
 
 export function Atmosphere({ env, quality, water }: { env: World['env']; quality: Quality; water: ReturnType<typeof waterUniforms> }) {
   const { scene } = useThree()
@@ -49,6 +50,7 @@ export function Atmosphere({ env, quality, water }: { env: World['env']; quality
       night: t.night,
       rain: Math.min(1, wet),
       turb: t.turb + wet * 8,
+      env: t.env * (1 - wet * 0.4),
     }
     if (!live.current) live.current = target
     const c = live.current
@@ -56,7 +58,7 @@ export function Atmosphere({ env, quality, water }: { env: World['env']; quality
     c.dir.lerp(target.dir, k).normalize()
     c.sun.lerp(target.sun, k); c.sky.lerp(target.sky, k); c.ground.lerp(target.ground, k); c.fog.lerp(target.fog, k)
     c.sunI += (target.sunI - c.sunI) * k; c.hemiI += (target.hemiI - c.hemiI) * k; c.fogD += (target.fogD - c.fogD) * k
-    c.night += (target.night - c.night) * k; c.rain += (target.rain - c.rain) * k; c.turb += (target.turb - c.turb) * k
+    c.night += (target.night - c.night) * k; c.env += (target.env - c.env) * k; c.rain += (target.rain - c.rain) * k; c.turb += (target.turb - c.turb) * k
 
     if (env.weather === 'storm' && Math.random() < dt * 0.25) flash.current = 1
     flash.current = Math.max(0, flash.current - dt * 4)
@@ -80,21 +82,29 @@ export function Atmosphere({ env, quality, water }: { env: World['env']; quality
       const u = (sky.material as THREE.ShaderMaterial).uniforms
       u.sunPosition.value.copy(c.dir).multiplyScalar(1000)
       u.turbidity.value = c.turb
-      u.rayleigh.value = 1.2 + c.rain * 2
+      u.rayleigh.value = 1.6 + c.rain * 2
     }
     if (starsRef.current) starsRef.current.visible = c.night > 0.6
+    scene.environmentIntensity = c.env
     SHARED.window.emissiveIntensity = c.night * 2.6
     SHARED.lamp.emissiveIntensity = 0.2 + c.night * 5
     water.uTime.value += dt
     water.uSunDir.value.copy(lightDir)
     water.uSunColor.value.copy(c.sun).multiplyScalar(isMoon ? 0.3 : 1)
-    water.uSky.value.copy(c.fog)
+    water.uSky.value.copy(c.sky).lerp(c.fog, 0.4)
     water.uRain.value = c.rain
   })
 
   const shadow = quality === 'high' ? 2048 : 1024
   return (
     <>
+      {/* procedural environment map (no HDR download): soft sky dome + key/fill light cards for PBR reflections */}
+      <Environment frames={1} resolution={64} background={false}>
+        <mesh scale={50}><sphereGeometry args={[1, 24, 12]} /><meshBasicMaterial color="#8ea3bf" side={THREE.BackSide} /></mesh>
+        <Lightformer form="rect" intensity={3} color="#fff4e4" position={[10, 12, 6]} scale={[12, 6, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={0.8} color="#9cb6dc" position={[-12, 6, -8]} scale={[16, 6, 1]} target={[0, 0, 0]} />
+        <mesh position={[0, -20, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={80}><planeGeometry /><meshBasicMaterial color="#3a3226" /></mesh>
+      </Environment>
       <Sky ref={skyRef as never} distance={4500} mieCoefficient={0.006} mieDirectionalG={0.86} />
       <Stars ref={starsRef as never} radius={300} depth={60} count={quality === 'low' ? 1500 : 4000} factor={4} fade speed={0.4} />
       <hemisphereLight ref={hemiRef} intensity={0.7} />

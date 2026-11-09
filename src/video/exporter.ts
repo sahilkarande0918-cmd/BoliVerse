@@ -35,7 +35,7 @@ export async function encodeFrames(opts: {
 }): Promise<Blob | null> {
   const { canvas, plan, fps, frames } = opts
   const output = new Output({ format: plan.container === 'mp4' ? new Mp4OutputFormat({ fastStart: 'in-memory' }) : new WebMOutputFormat(), target: new BufferTarget() })
-  const source = new CanvasSource(canvas, { codec: plan.codec, bitrate: QUALITY_HIGH, keyFrameInterval: 2 })
+  const source = new CanvasSource(canvas, { codec: plan.codec, bitrate: QUALITY_HIGH, keyFrameInterval: 2, sizeChangeBehavior: 'contain' })
   output.addVideoTrack(source, { frameRate: fps })
   await output.start()
   for (let i = 0; i < frames; i++) {

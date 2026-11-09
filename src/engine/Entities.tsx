@@ -8,16 +8,17 @@ import { useStudio } from '../store'
 import { DECK_Y, type Entity, rng, riverSlope, riverX, terrainHeight, WATER_Y } from './world'
 import type { Route } from './traversal'
 import { footprint } from './spatial'
+import { TEX } from './textures'
 
 // ---------- shared materials (one instance each → cheap, and night glow is one uniform update) ----------
 const std = (color: string, o: THREE.MeshStandardMaterialParameters = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...o })
 export const SHARED = {
   window: std('#2b2520', { emissive: new THREE.Color('#ffae55'), emissiveIntensity: 0 }),
   lamp: std('#fff1c8', { emissive: new THREE.Color('#ffc46b'), emissiveIntensity: 0.2 }),
-  door: std('#4a2f1e'),
-  plinth: std('#8d806e', { roughness: 0.95 }),
-  tile: std('#9a4a32'),
-  thatch: std('#b39558', { roughness: 1 }),
+  door: std('#4a2f1e', { map: TEX.wood }),
+  plinth: std('#8a7f72', { roughness: 0.95, map: TEX.stone }),
+  tile: std('#a2523a', { map: TEX.tiles, roughness: 0.75 }),
+  thatch: std('#a88d55', { roughness: 1, map: TEX.wood }),
   flat: std('#d6cbb5'),
   tank: std('#2c3640', { roughness: 0.5 }),
   trunk: std('#5a4130', { roughness: 1 }),
@@ -52,7 +53,8 @@ export function surface(material?: Material, color?: Color, fallback = '#d9a35b'
   const key = `${material}|${color}|${fallback}`
   let m = matCache.get(key)
   if (!m) {
-    m = std(fallback, material ? MAT_LOOK[material] : {})
+    const map = material === 'wood' || material === 'mud' ? TEX.wood : material === 'stone' || material === 'brick' ? TEX.stone : material ? null : TEX.plaster
+    m = std(fallback, { map, ...(material ? MAT_LOOK[material] : { roughness: 0.92 }) })
     if (color) m.color.set(COLOR_HEX[color])
     matCache.set(key, m)
   }

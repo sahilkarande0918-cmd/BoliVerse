@@ -7,7 +7,7 @@ import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from '@react-thre
 import { BlendFunction, ToneMappingMode } from 'postprocessing'
 import type { OrbitControls as OrbitImpl } from 'three-stdlib'
 import { type Quality, useStudio } from '../store'
-import { Terrain, Water, waterUniforms } from './Terrain'
+import { GrassField, Terrain, Water, waterUniforms } from './Terrain'
 import { Atmosphere } from './Atmosphere'
 import { WorldEntities } from './Entities'
 import { computeRoute } from './traversal'
@@ -101,8 +101,12 @@ function FilmRecorder({ world }: { world: World }) {
       let blob: Blob | null = null
       let label = ''
       try {
-        state.setDpr(1)
-        state.setSize(W, H, prev.top, prev.left)
+        await new Promise((r) => setTimeout(r, 450)) // let panel transitions (film timeline) settle
+        const enforce = () => {
+          const cur = state.get()
+          if (cur.gl.domElement.width !== W || cur.gl.domElement.height !== H) { cur.setDpr(1); cur.setSize(W, H, prev.top, prev.left) }
+        }
+        enforce()
         await new Promise((r) => setTimeout(r, 150))
         if (plan.kind === 'webcodecs') {
           label = plan.container === 'mp4' ? 'MP4 · H.264' : `WebM · ${plan.codec.toUpperCase()}`
@@ -112,7 +116,7 @@ function FilmRecorder({ world }: { world: World }) {
           const base = state.clock.elapsedTime
           blob = await encodeFrames({
             canvas: state.gl.domElement, plan, fps, frames, cancelled,
-            renderFrame: (i) => { poseAt(path, i / (frames - 1), state.camera as THREE.PerspectiveCamera); state.advance(base + (i + 1) / fps) },
+            renderFrame: (i) => { enforce(); poseAt(path, i / (frames - 1), state.camera as THREE.PerspectiveCamera); state.advance(base + (i + 1) / fps) },
             onProgress: (p) => set({ progress: p }),
           })
         } else {
@@ -157,10 +161,10 @@ function FpsProbe() {
 const Effects = memo(function Effects({ quality }: { quality: Quality }) {
   if (quality === 'low') return null
   const fx = [
-    <Bloom key="bloom" mipmapBlur intensity={0.55} luminanceThreshold={0.82} luminanceSmoothing={0.25} />,
+    <Bloom key="bloom" mipmapBlur intensity={0.32} luminanceThreshold={0.92} luminanceSmoothing={0.2} />,
     <ToneMapping key="tm" mode={ToneMappingMode.ACES_FILMIC} />,
-    <Vignette key="vig" offset={0.28} darkness={0.55} />,
-    <Noise key="grain" opacity={0.022} premultiply blendFunction={BlendFunction.SOFT_LIGHT} />,
+    <Vignette key="vig" offset={0.32} darkness={0.42} />,
+    <Noise key="grain" opacity={0.018} premultiply blendFunction={BlendFunction.SOFT_LIGHT} />,
   ].filter(Boolean) as ReactElement[]
   return <EffectComposer multisampling={quality === 'high' ? 4 : 0}>{fx}</EffectComposer>
 })
@@ -183,6 +187,9 @@ export function WorldView({ world, quality, paused = false, hero = false }: { wo
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const route = useMemo(() => computeRoute(world), [routeKey])
   const water = useMemo(waterUniforms, [])
+  const structKey = world.entities.filter((e) => e.type !== 'tree' && e.type !== 'rock').length
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const avoid = useMemo(() => world.entities.filter((e) => ['house', 'temple', 'school', 'well'].includes(e.type)).map((e) => [e.pos[0], e.pos[2], e.type === 'school' ? 8 : 5] as [number, number, number]), [structKey])
   return (
     <GLBoundary>
       <Canvas
@@ -190,7 +197,7 @@ export function WorldView({ world, quality, paused = false, hero = false }: { wo
         flat={quality !== 'low'}
         dpr={quality === 'high' ? [1, 2] : [1, 1.5]}
         gl={{ preserveDrawingBuffer: !hero, powerPreference: 'high-performance', antialias: quality === 'low' }}
-        camera={{ position: [70, 50, 85], fov: 45, near: 0.1, far: 3000 }}
+        camera={{ position: [78, 58, 96], fov: 40, near: 0.1, far: 3000 }}
         onPointerMissed={() => useStudio.getState().select(null)}
         onCreated={({ gl }) => { gl.shadowMap.type = THREE.PCFSoftShadowMap }}
       >
@@ -199,6 +206,7 @@ export function WorldView({ world, quality, paused = false, hero = false }: { wo
             <Terrain segments={quality === 'high' ? 180 : quality === 'medium' ? 130 : 90} />
             <WorldEntities entities={world.entities} selectedId={hero ? null : selectedId} route={route} />
           </Physics>
+          {quality !== 'low' && world.entities.length > 0 && <GrassField count={quality === 'high' ? 9000 : 4000} avoid={avoid} />}
         </Suspense>
         {world.entities.some((e) => e.type === 'river') && <Water uniforms={water} />}
         <Atmosphere env={world.env} quality={quality} water={water} />

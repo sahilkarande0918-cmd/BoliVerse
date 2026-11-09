@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Icon, Mark } from './Icon'
 
 const HeroWorld = lazy(() => import('./HeroWorld'))
@@ -8,163 +8,125 @@ function useLiveHero() {
   const [ok, setOk] = useState(false)
   useEffect(() => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const slow = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
-    if (reduced || slow) return
-    const id = setTimeout(() => setOk(true), 200) // let the text paint first
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+    if (reduced || saveData) return
+    const id = setTimeout(() => setOk(true), 150)
     return () => clearTimeout(id)
   }, [])
   return ok
 }
 
+const STEPS = [
+  ['Speak', 'Hindi, Marathi, Hinglish or English. Gnani Prisma transcribes it on our server, and your key never reaches the page.'],
+  ['Compile', 'A deterministic multilingual grammar turns everyday speech into typed operations. Groq handles the rest within the same strict schema.'],
+  ['Resolve', '“it”, “that bridge”, “same jagah” and “school ke paas” bind to real objects through spatial solvers.'],
+  ['Simulate', 'Edits land as undoable transactions. Rapier physics and a traversal graph play out the consequences.'],
+]
+
 export function Landing() {
   const live = useLiveHero()
-  const year = useMemo(() => new Date().getFullYear(), [])
   return (
-    <div className="min-h-full bg-[var(--bg)]">
-      {/* ---------- hero ---------- */}
-      <section className="relative h-[100svh] min-h-[620px] overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,#5a3a1e_0%,#1a1410_45%,#080a0c_80%)]" />
-        {live && <Suspense fallback={null}><div className="absolute inset-0 opacity-0 [animation:rise_2.4s_ease_0.2s_forwards]"><HeroWorld /></div></Suspense>}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(8,10,12,0.92)_0%,rgba(8,10,12,0.55)_42%,rgba(8,10,12,0)_70%),linear-gradient(0deg,#080a0c_2%,rgba(8,10,12,0)_35%)]" />
+    <div className="min-h-full bg-[var(--bg)] text-[var(--text)]">
+      <section className="relative h-[100svh] min-h-[640px] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_70%_30%,#2b3542_0%,#12161b_55%,#0b0d10_100%)]" />
+        {live && <Suspense fallback={null}><div className="fadein absolute inset-0 [&_.cart-tag]:hidden"><HeroWorld /></div></Suspense>}
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(11,13,16,0.85)_0%,rgba(11,13,16,0.35)_45%,rgba(11,13,16,0)_70%),linear-gradient(0deg,#0b0d10_0%,rgba(11,13,16,0)_38%),linear-gradient(180deg,rgba(11,13,16,0.6)_0%,rgba(11,13,16,0)_18%)]" />
 
-        <header className="relative z-10 mx-auto flex max-w-7xl items-center gap-6 px-4 py-5 sm:px-8">
-          <a href="#/" className="flex items-center gap-2"><Mark size={26} /><span className="font-display text-2xl">BoliVerse</span></a>
-          <nav className="ml-auto hidden items-center gap-6 text-[13px] text-[var(--muted)] md:flex">
-            <a href="#how" className="hover:text-[var(--text)]">How it works</a>
-            <a href="#physics" className="hover:text-[var(--text)]">Physics</a>
-            <a href="#languages" className="hover:text-[var(--text)]">Languages</a>
-            <a href="#film" className="hover:text-[var(--text)]">Film</a>
-            <a href={REPO} target="_blank" rel="noreferrer" className="hover:text-[var(--text)]">GitHub</a>
+        <header className="relative z-10 mx-auto flex max-w-[1400px] items-center px-5 py-5 sm:px-10">
+          <a href="#/" className="flex items-center gap-2.5"><Mark size={20} /><span className="text-[15px] font-semibold tracking-tight">BoliVerse</span></a>
+          <nav className="ml-12 hidden items-center gap-8 text-[13px] text-[var(--muted)] md:flex">
+            <a href="#how" className="transition hover:text-[var(--text)]">How it works</a>
+            <a href="#physics" className="transition hover:text-[var(--text)]">Physics</a>
+            <a href="#languages" className="transition hover:text-[var(--text)]">Languages</a>
+            <a href="#film" className="transition hover:text-[var(--text)]">Film</a>
           </nav>
-          <a href="#/studio" className="btn ml-auto md:ml-0">Open Studio</a>
+          <div className="ml-auto flex items-center gap-2">
+            <a href={REPO} target="_blank" rel="noreferrer" className="tool max-sm:hidden" aria-label="Source on GitHub"><Icon name="github" /></a>
+            <a href="#/studio" className="btn-primary">Open Studio</a>
+          </div>
         </header>
 
-        <div className="relative z-10 mx-auto flex h-[calc(100%-88px)] max-w-7xl items-end px-4 pb-14 sm:px-8 sm:pb-20">
-          <div className="grid w-full items-end gap-10 lg:grid-cols-[1fr_360px]">
-            <div className="rise max-w-2xl">
-              <p className="label mb-5 !text-[var(--gold)]">Multilingual voice → live 3D world compiler</p>
-              <h1 className="font-display text-[clamp(3.2rem,9vw,7.5rem)] leading-[0.88] tracking-[-0.02em]">Your words.<br /><em className="text-[var(--gold-2)]">Your world.</em></h1>
-              <p className="mt-6 max-w-md text-[17px] leading-relaxed text-[#cfc8bb]">Speak in Hindi, Marathi, Hinglish or English. BoliVerse compiles every sentence into safe, typed edits of a persistent 3D world, with real physics and consequences.</p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#/studio" className="btn btn-gold h-11 px-6 text-sm">Enter the Studio <Icon name="arrow" size={15} /></a>
-                <a href="#demo" className="btn h-11 px-6 text-sm"><Icon name="play" size={14} />Watch Demo</a>
-              </div>
+        <div className="relative z-10 mx-auto flex h-[calc(100%-76px)] max-w-[1400px] flex-col justify-end px-5 pb-12 sm:px-10 sm:pb-16">
+          <p className="rise eyebrow mb-6 !text-[var(--accent-2)]">Voice → living 3D world · Powered by Gnani Prisma</p>
+          <h1 className="rise max-w-[11ch] text-[clamp(3.4rem,10.5vw,9.5rem)] font-semibold uppercase leading-[0.86] tracking-[-0.045em] [animation-delay:80ms]">
+            Your words.<br /><span className="text-[var(--accent-2)]">Your world.</span>
+          </h1>
+          <div className="rise mt-8 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between [animation-delay:160ms]">
+            <p className="max-w-[30ch] text-[clamp(1.05rem,1.6vw,1.35rem)] font-light leading-snug text-[#d8d4cc]">Build living 3D worlds. Just by speaking.</p>
+            <div className="flex flex-wrap items-center gap-5">
+              <a href="#/studio" className="btn-primary !h-11 !px-6 !text-[13px]">Enter the Studio <Icon name="arrow" size={14} /></a>
+              <a href="#film" className="flex items-center gap-2 text-[13px] text-[var(--text)]/85 transition hover:text-[var(--text)]"><span className="grid h-9 w-9 place-items-center rounded-full ring-1 ring-white/25"><Icon name="play" size={12} /></span>Watch the film</a>
             </div>
-            <aside className="glass rise hidden rounded-2xl p-5 [animation-delay:0.25s] lg:block" aria-label="Live pipeline">
-              <p className="label mb-1">Live pipeline</p>
-              <p className="mb-4 font-display text-2xl">“Ab bridge tod do.”</p>
-              <ol className="space-y-2.5 text-[13px]">
-                {[
-                  ['Gnani Prisma v3.0', 'speech → text, code-mixed'],
-                  ['Compiler', 'local parser · Groq fallback'],
-                  ['Zod-validated ops', 'DESTROY_STRUCTURE(bridge_1)'],
-                  ['Rapier physics', 'deck fractures into rigid bodies'],
-                  ['Causal graph', 'river crossing blocked'],
-                ].map(([a, b], i) => (
-                  <li key={a} className="flex gap-3">
-                    <span className="tnum mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[var(--line-2)] text-[10px] text-[var(--gold)]">{i + 1}</span>
-                    <span><b className="font-medium">{a}</b><span className="block text-[var(--muted)]">{b}</span></span>
-                  </li>
-                ))}
-              </ol>
-              <a href="#/studio" className="btn mt-5 w-full">Try it live</a>
-            </aside>
           </div>
+          <p className="mt-10 text-[11px] text-white/45">Background: the BoliVerse engine rendering live in your browser. Not a pre-recorded video.</p>
         </div>
       </section>
 
-      {/* ---------- how it works ---------- */}
-      <section id="how" className="mx-auto max-w-7xl px-4 py-24 sm:px-8">
-        <p className="label mb-3">How it works</p>
-        <h2 className="max-w-3xl font-display text-[clamp(2.2rem,5vw,3.8rem)] leading-[1.02]">A spoken programming language for living worlds.</h2>
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--line)] md:grid-cols-4">
-          {[
-            ['Speak', 'Your voice is captured in the browser and sent through our server to Gnani Prisma. Keys never reach the page.'],
-            ['Compile', 'A deterministic Hindi/Marathi/English grammar handles everyday commands with no network call. Complex requests go to Groq, which is constrained to a typed operation schema.'],
-            ['Resolve', '“it”, “that bridge”, “same jagah” and “school ke paas” resolve against real entity IDs and spatial solvers.'],
-            ['Simulate', 'The world mutates transactionally with undo. Rapier physics and a traversal graph show the consequences.'],
-          ].map(([t, d], i) => (
-            <div key={t} className="bg-[var(--panel)] p-6">
-              <span className="tnum font-mono text-xs text-[var(--gold)]">0{i + 1}</span>
-              <h3 className="mt-6 font-display text-3xl">{t}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------- physics ---------- */}
-      <section id="physics" className="border-y border-[var(--line)] bg-[var(--panel)]">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-8 lg:grid-cols-2">
+      <section id="how" className="mx-auto max-w-[1400px] px-5 py-28 sm:px-10">
+        <div className="grid gap-16 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <p className="label mb-3">What physics changes</p>
-            <h2 className="font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.02]">Break the bridge. <em className="text-[var(--gold-2)]">The village notices.</em></h2>
-            <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]">A bullock cart shuttles between the banks along a route computed from a small connectivity graph. Destroy the bridge and its deck becomes real Rapier rigid bodies. Wooden planks float and drift downstream, stone blocks sink, and the cart stops at the bank. Rebuild in stone on the same banks and the route reopens.</p>
+            <p className="eyebrow mb-5">How it works</p>
+            <h2 className="text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">A spoken programming language for living worlds.</h2>
           </div>
-          <ul className="grid content-start gap-3 text-sm">
-            {[
-              ['Rapier WASM, fixed 60 Hz step', 'Static terrain trimesh, cuboid colliders for buildings, convex-hull rocks you can push.'],
-              ['Pre-segmented fracture', 'Bridge decks split into seeded, reproducible debris. Documented as a game-physics approximation, not structural engineering.'],
-              ['Traversal graph', 'Banks and bridges form a graph. BFS decides whether a crossing exists, and the cart replans live.'],
-              ['Undo restores everything', 'World snapshots bring back colliders, routes and debris state.'],
-            ].map(([a, b]) => (
-              <li key={a} className="rounded-xl border border-[var(--line)] p-4"><b className="font-medium">{a}</b><p className="mt-1 text-[var(--muted)]">{b}</p></li>
+          <ol className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
+            {STEPS.map(([t, d], i) => (
+              <li key={t} className="grid grid-cols-[48px_140px_1fr] gap-4 py-6 max-sm:grid-cols-[36px_1fr]">
+                <span className="tnum font-mono text-[12px] text-[var(--accent)]">0{i + 1}</span>
+                <span className="text-[18px] font-medium">{t}</span>
+                <span className="text-[14px] leading-relaxed text-[var(--muted)] max-sm:col-span-2">{d}</span>
+              </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </section>
 
-      {/* ---------- languages ---------- */}
-      <section id="languages" className="mx-auto max-w-7xl px-4 py-24 sm:px-8">
-        <p className="label mb-3">Voice languages</p>
-        <h2 className="max-w-3xl font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.02]">Bolo jaise bolte ho.</h2>
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <section id="physics" className="border-y border-[var(--line)] bg-[var(--panel)]">
+        <div className="mx-auto grid max-w-[1400px] gap-16 px-5 py-28 sm:px-10 lg:grid-cols-2">
+          <h2 className="text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">Break the bridge.<br /><span className="text-[var(--muted)]">The village notices.</span></h2>
+          <div className="space-y-6 text-[15px] leading-relaxed text-[var(--muted)]">
+            <p>A bullock cart shuttles between the banks on a route computed from a small connectivity graph. Say <em className="text-[var(--text)] not-italic">“ab bridge tod do”</em>. The deck breaks into Rapier rigid bodies: wooden planks float downstream, stone sinks, and the cart halts at the water’s edge.</p>
+            <p>Say <em className="text-[var(--text)] not-italic">“stone bridge banao, same jagah”</em> and a new crossing spans the same two banks. The route reopens. Undo restores every collider and route state.</p>
+            <p className="text-[12px] text-[var(--faint)]">Fracture uses pre-segmented, seeded debris. It is game physics, not structural engineering.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="languages" className="mx-auto max-w-[1400px] px-5 py-28 sm:px-10">
+        <p className="eyebrow mb-5">Languages</p>
+        <h2 className="max-w-3xl text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">Bolo jaise bolte ho.</h2>
+        <div className="mt-14 grid gap-px overflow-hidden border-y border-[var(--line)] bg-[var(--line)] sm:grid-cols-2 lg:grid-cols-4">
           {[
             ['Hindi', 'नदी के ऊपर लकड़ी का पुल बनाओ'],
             ['Marathi', 'नदीवर दगडी पूल बांधा आणि पाऊस पाडा'],
             ['Hinglish', 'Bridge thoda bada karo, aur sunset kar do'],
             ['English', 'Paint that bridge red, then undo'],
           ].map(([l, s]) => (
-            <figure key={l} className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-5">
-              <figcaption className="label">{l}</figcaption>
-              <blockquote className="mt-4 font-display text-2xl leading-snug">“{s}”</blockquote>
+            <figure key={l} className="bg-[var(--bg)] py-8 pr-6 sm:px-6">
+              <figcaption className="eyebrow">{l}</figcaption>
+              <blockquote className="mt-5 font-display text-[28px] leading-[1.15]">“{s}”</blockquote>
             </figure>
           ))}
         </div>
-        <p className="mt-6 max-w-2xl text-sm text-[var(--muted)]">Transcription: Gnani Prisma v3.0 with auto language detection and code-mix output. Spoken confirmations: Gnani Timbre (optional). Accuracy figures in our docs are from synthetic and recorded tests and are labelled as such.</p>
+        <p className="mt-6 max-w-2xl text-[13px] text-[var(--muted)]">Gnani Prisma v3.0 handles transcription, with auto language detection, code-mix output and command keyterm biasing. Gnani Timbre can speak confirmations back.</p>
       </section>
 
-      {/* ---------- film + demo ---------- */}
       <section id="film" className="border-t border-[var(--line)] bg-[var(--panel)]">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-24 sm:px-8 lg:grid-cols-[1fr_1.2fr]">
+        <div className="mx-auto grid max-w-[1400px] items-center gap-14 px-5 py-28 sm:px-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
-            <p className="label mb-3">Cinematic export</p>
-            <h2 className="font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.02]">Say the shot. <em className="text-[var(--gold-2)]">Download the film.</em></h2>
-            <p className="mt-5 text-[15px] leading-relaxed text-[var(--muted)]">“Camera ko neeche se le jao, bridge ke upar fly karo, 10 second ka cinematic video banao.” This plans a spline camera path from the live world and renders it frame by frame. It encodes MP4 (H.264) via WebCodecs and Mediabunny, with a clearly labelled WebM fallback. 16:9 or 9:16, 720p, silent.</p>
+            <p className="eyebrow mb-5">Cinematic export</p>
+            <h2 className="text-[clamp(2.2rem,4.6vw,3.6rem)] font-semibold leading-[0.98] tracking-[-0.035em]">Say the shot. Download the film.</h2>
+            <p className="mt-6 text-[15px] leading-relaxed text-[var(--muted)]">“Camera ko neeche se le jao, bridge ke upar fly karo, 10 second ka cinematic video banao.” BoliVerse plans a spline camera move through the live world, then renders it frame by frame to MP4 (H.264, via WebCodecs and Mediabunny).</p>
           </div>
-          <div id="demo" className="overflow-hidden rounded-2xl border border-[var(--line)] bg-black">
-            <video className="aspect-video w-full" controls preload="none" poster="/demo/poster.jpg" src="/demo/boliverse-demo.mp4">
-              Your browser cannot play this video.
-            </video>
+          <div id="demo" className="overflow-hidden rounded-lg bg-black ring-1 ring-[var(--line)]">
+            <video className="aspect-video w-full" controls preload="none" poster="/demo/poster.jpg" src="/demo/boliverse-demo.mp4">Your browser cannot play this video.</video>
           </div>
         </div>
       </section>
 
-      {/* ---------- powered by ---------- */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-8">
-        <div className="grid gap-6 rounded-2xl border border-[var(--line)] p-8 md:grid-cols-[1.2fr_1fr] md:items-center">
-          <div>
-            <p className="label mb-2">Powered by</p>
-            <p className="font-display text-4xl">Gnani Prisma <span className="text-[var(--muted)]">&amp;</span> Timbre</p>
-            <p className="mt-3 text-sm text-[var(--muted)]">Built for the Gnani AI Great Indian AI Internship Challenge. Groq (openai/gpt-oss-20b) plans complex commands only. Three.js, React Three Fiber, Rapier, Zod, Zustand and Mediabunny. All open source.</p>
-          </div>
-          <div className="flex flex-wrap gap-3 md:justify-end">
-            <a href="#/studio" className="btn btn-gold h-11 px-6">Enter the Studio</a>
-            <a href={REPO} target="_blank" rel="noreferrer" className="btn h-11 px-6"><Icon name="github" />Source</a>
-          </div>
-        </div>
-      </section>
-      <footer className="border-t border-[var(--line)] px-4 py-8 text-center text-xs text-[var(--muted)]">© {year} BoliVerse · Built for #GreatIndianAIInternshipChallenge #GnaniAI · Procedural 3D, no third-party models</footer>
+      <footer className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-5 py-10 text-[12px] text-[var(--muted)] sm:px-10">
+        <Mark size={16} /><span>BoliVerse, built for the Gnani AI Great Indian AI Internship Challenge.</span>
+        <span className="ml-auto flex gap-5"><a href={REPO} className="hover:text-[var(--text)]">GitHub</a><a href="#/studio" className="hover:text-[var(--text)]">Studio</a></span>
+      </footer>
     </div>
   )
 }

@@ -6,6 +6,10 @@ import { type Capture, startCapture } from './audio'
 let capture: Capture | null = null
 let stopping = false
 let lastLevel = 0
+/** last ~85 ms of mic samples for the waveform visualiser */
+export const wave = new Float32Array(4096)
+let waveAt = 0
+export const waveHead = () => waveAt
 
 export async function toggleMic() {
   const s = useStudio.getState()
@@ -22,7 +26,8 @@ export async function toggleMic() {
   try {
     s.set({ phase: 'listening', message: 'Listening… speak, then pause (auto-stops after silence)' })
     capture = await startCapture({
-      onLevel: (rms) => {
+      onLevel: (rms, samples) => {
+        for (const v of samples) { wave[waveAt] = v; waveAt = (waveAt + 1) % wave.length }
         const now = performance.now()
         if (now - lastLevel > 60) { lastLevel = now; useStudio.getState().set({ level: Math.min(1, rms * 9) }) }
       },
@@ -52,7 +57,7 @@ async function finish() {
       useStudio.getState().set({ phase: 'error', message: 'Gnani heard silence — try again a little closer to the mic.' })
       return
     }
-    await useStudio.getState().run(r.transcript, 'voice', { stt, t0: speechEnd + stt, language: r.language, provider: `Gnani ${r.model} · provider ${r.providerLatencyMs} ms` })
+    await useStudio.getState().run(r.transcript, 'voice', { stt, t0: speechEnd, language: r.language, provider: `Gnani ${r.model} · provider ${r.providerLatencyMs} ms` })
   } catch (e) {
     const code = e instanceof ApiError ? e.code : undefined
     const msg = code === 'NO_CREDIT' ? 'Gnani credits exhausted — voice is paused; typed commands still work.'
