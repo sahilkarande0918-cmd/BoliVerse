@@ -1,5 +1,8 @@
 # BoliVerse: speak a world into existence
 
+> ### 📄 [Read the Solution Pitch →](docs/SOLUTION_PITCH.md)
+> The problem, our solution, how we use Gnani Prisma and Timbre, major features and team contributions, on one page.
+
 **Live:** https://boliverse.vercel.app · **Studio:** https://boliverse.vercel.app/#/studio · **Demo film:** [`public/demo/boliverse-demo.mp4`](public/demo/boliverse-demo.mp4)
 
 BoliVerse is a multilingual voice-to-3D-world compiler. You speak in Hindi, Marathi, Hinglish or English, and **Gnani Prisma** transcribes it. A compiler turns the transcript into typed, validated operations on a persistent 3D world, and **Rapier** physics plus a causal traversal graph play out the consequences. You can then ask for a cinematic shot and download a real MP4 of the same live scene.
@@ -98,6 +101,6 @@ The studio works in any WebGL2 browser. MP4 export needs WebCodecs with H.264 (C
 
 ## Docs
 
-[Tech stack](docs/TECH_STACK.md) · [Research and decisions](docs/RESEARCH_DECISIONS.md) · [Results and tests](docs/RESULTS.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Hackathon submission](docs/HACKATHON_SUBMISSION.md) · [Assets and licences](docs/ASSET_LICENSES.md) · [Realism audit](docs/REALISM_AUDIT.md) · [Rendering decisions](docs/RENDERING_DECISIONS.md)
+[Solution pitch](docs/SOLUTION_PITCH.md) · [Tech stack](docs/TECH_STACK.md) · [Research and decisions](docs/RESEARCH_DECISIONS.md) · [Results and tests](docs/RESULTS.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Hackathon submission](docs/HACKATHON_SUBMISSION.md) · [Assets and licences](docs/ASSET_LICENSES.md) · [Realism audit](docs/REALISM_AUDIT.md) · [Rendering decisions](docs/RENDERING_DECISIONS.md)
 
 Built for the Gnani AI **Great Indian AI Internship Challenge**. #GnaniAI #GreatIndianAIInternshipChallenge
