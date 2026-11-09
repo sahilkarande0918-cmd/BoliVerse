@@ -17,8 +17,8 @@
 - **Mansion creation:** a luxury mansion with a pool, furnished by voice.
 - **Cinematic export:** camera presets and frame-exact MP4 export, in the browser.
 
-**Architecture.** Mic → Gnani Prisma → multilingual parser (Groq fallback) → Zod-validated operations → persistent world → Three.js + Rapier physics → MP4 export. It is hosted on Vercel with no GPU servers and has 89 automated tests.
+**Architecture.** Mic → Gnani Prisma → multilingual parser (Groq fallback) → Zod-validated operations → persistent world → Three.js + Rapier physics → MP4 export. Hosted on Vercel, no GPU servers, 89 automated tests.
 
-**Real-world value.** People create in the language they think in, and cause and effect is visible, which suits classrooms, civic planning and storytelling. Anyone with a browser and a microphone can use it free.
+**Real-world value.** People create in the language they think in, and cause and effect is visible, which suits classrooms, civic planning and storytelling. Anyone with a browser can use it free.
 
-**Team.** **Sahil Karande:** concept, architecture, Gnani integration, compiler, 3D engine, physics, UI, export and deployment. **Purvesh Mhatre:** *[contribution to be confirmed]*.
+**Team.** **Sahil Karande:** concept, architecture, Gnani integration, compiler, 3D engine, physics, UI, export and deployment. **Purvesh Mhatre:** researched and suggested useful open-source repos and tools.

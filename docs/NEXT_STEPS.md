@@ -20,7 +20,7 @@ Done on 9 Nov 2026:
 1. **Human checks:**
    - a human-voice mic test on https://boliverse.vercel.app/#/studio; the official demo uses synthetic Timbre voices and says so
    - check the Gnani Discord
-   - confirm the team credit "Sahil Karande & Purvesh Mhatre" on the end slate; the repo docs list only Sahil (Solo Ninja category)
+   - team confirmed: Sahil Karande (build) and Purvesh Mhatre (researched and suggested useful repos and tools); mark it as a team entry on the form, not solo
 2. **Submission:**
    - upload the official demo as Unlisted YouTube and post the 60 s film publicly with `#GnaniAI #GreatIndianAIInternshipChallenge`
    - submit the official form before **10 Nov 2026 11:59 PM IST**
