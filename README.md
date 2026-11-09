@@ -12,7 +12,7 @@ BoliVerse is a multilingual voice-to-3D-world compiler. You speak in Hindi, Mara
 |---|---|
 | Gnani Prisma v3.0 speech-to-text through a server relay (key never in browser) | ✅ Live. Hindi, Marathi and code-mixed transcripts, provider latency ~180–400 ms per utterance in our tests. |
 | Gnani Timbre v3.0 spoken confirmations (toggle “Timbre replies”) | ✅ Live (MP3, `bitrate: "64k"`) |
-| Local multilingual parser (no network) | ✅ 81 automated tests incl. real Prisma transcripts |
+| Local multilingual parser (no network) | ✅ 87 automated tests incl. real Prisma transcripts |
 | Groq `openai/gpt-oss-20b` fallback planner (JSON schema → Zod) | ✅ Live. Only used when the local parser is unsure. |
 | Persistent entity IDs, “it/isko/that/same jagah” resolution, corrections (“50 nahi, paanch”), undo/redo | ✅ |
 | Spatial solvers: across river, near/behind/between, interior furniture slots, site clearing | ✅ |
@@ -88,12 +88,16 @@ vercel deploy --prod
 
 Notes on limits: each Prisma call is ≤30 s of audio and only one runs at a time per key. The function rate limit is per instance (documented ponytail trade-off). Add Vercel WAF rate limiting if traffic grows.
 
+## Render quality
+
+The Inspector has a **Low / Medium / High / Ultra** setting. Low: PBR materials, no reflections or grass. Medium: mirror river, grass. High: god rays, 3D clouds, colour grade, MSAA, 2048 shadows. Ultra: 2× pixel ratio, 4096 shadows, denser grass, sharper reflections. Captures and frame timings are in [docs/REALISM_AUDIT.md](docs/REALISM_AUDIT.md).
+
 ## Browser support
 
 The studio works in any WebGL2 browser. MP4 export needs WebCodecs with H.264 (Chrome/Edge desktop); otherwise it falls back to labelled WebM. The microphone needs HTTPS and permission. Scenes stay in your browser (IndexedDB); voice audio is sent only to Gnani for transcription and is not stored by BoliVerse.
 
 ## Docs
 
-[Tech stack](docs/TECH_STACK.md) · [Research and decisions](docs/RESEARCH_DECISIONS.md) · [Results and tests](docs/RESULTS.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Hackathon submission](docs/HACKATHON_SUBMISSION.md) · [Assets and licences](ASSETS_LICENSES.md)
+[Tech stack](docs/TECH_STACK.md) · [Research and decisions](docs/RESEARCH_DECISIONS.md) · [Results and tests](docs/RESULTS.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Hackathon submission](docs/HACKATHON_SUBMISSION.md) · [Assets and licences](docs/ASSET_LICENSES.md) · [Realism audit](docs/REALISM_AUDIT.md) · [Rendering decisions](docs/RENDERING_DECISIONS.md)
 
 Built for the Gnani AI **Great Indian AI Internship Challenge**. #GnaniAI #GreatIndianAIInternshipChallenge

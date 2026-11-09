@@ -29,7 +29,7 @@ The demo film's voices are **synthetic Gnani Timbre clips** fed through the real
 ## Third-party models / services disclosure
 
 * Groq `openai/gpt-oss-20b`: fallback planner, emits JSON operations only.
-* No other AI models. All 3D content is procedural; see `ASSETS_LICENSES.md`.
+* No other AI models. 3D geometry is procedural, with CC0 Poly Haven textures, HDRI skies and scanned models; see `docs/ASSET_LICENSES.md`.
 
 ## Submission checklist (for the participant)
 

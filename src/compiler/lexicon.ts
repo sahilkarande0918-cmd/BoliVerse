@@ -29,7 +29,7 @@ const L: Record<string, string> = {
   'SCENE:blank': 'reset start_over new_scene clear_everything shuru_se naya_scene sab_saaf सब_साफ',
 
   // ---- verbs ----
-  'V:create': 'make build create add construct place put plant generate spawn banao banaao bana banado banana banaye banaiye bnao banaa daalo dalo lagao rakho ugao ho hona chahiye bandho bandha banva banwa tayar taiyar lava ugva बनाओ बनाइए बना बनाना बनाएं डालो लगाओ रखो उगाओ हो होना चाहिए बांधो बांधा बनवा तयार लावा ठेवा theva rakh',
+  'V:create': 'make build create add wapas_banao vapas_banao waapas_banao wapas_bana wapas_banado parat_bandha वापस_बनाओ परत_बांधा construct place put plant generate spawn banao banaao bana banado banana banaye banaiye bnao banaa daalo dalo lagao rakho ugao ho hona chahiye bandho bandha banva banwa tayar taiyar lava ugva बनाओ बनाइए बना बनाना बनाएं डालो लगाओ रखो उगाओ हो होना चाहिए बांधो बांधा बनवा तयार लावा ठेवा theva rakh',
   'V:destroy': 'तो_दो to_do_do destroy break smash blow_up collapse demolish wreck tod todo todh tor toro todo_do tod_do tod_de gira girao gira_do uda_do ura_do nasht paada padun todun तोड़ो तोड़ तोडो तोड गिराओ गिरा नष्ट उड़ा उड़ाओ तोडा तोडून पाडा ध्वस्त',
   'V:delete': 'delete remove erase hatao hata hata_do nikalo nikaal mitao kadha kaadh kaadha हटाओ हटा निकालो मिटाओ काढा काढ',
   'V:repair': 'repair fix rebuild restore reconstruct theek thik sudhaar sudharo jod jodo ठीक सुधारो जोड़ो दुरुस्त',
@@ -120,7 +120,7 @@ const L: Record<string, string> = {
   'SECONDS': 'second seconds sec secs sekand सेकंड सेकंद',
   'METERS': 'meter meters metre metres mtr मीटर',
   'DEGREES': 'degree degrees digri डिग्री',
-  'AGAIN': 'again dobara dubara phir_se fir_se punha दोबारा फिर_से पुन्हा',
+  'AGAIN': 'again dobara dubara phir_se fir_se punha wapas_banao vapas_banao waapas_banao wapas_bana wapas_banado parat_bandha वापस_बनाओ परत_बांधा दोबारा फिर_से पुन्हा',
   'NEG': 'not no nahi nahin nai mat nako naka nahi_nahi नहीं नही नको नाही मत',
 }
 

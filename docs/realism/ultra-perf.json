@@ -2,10 +2,10 @@
  "quality": "ultra",
  "width": 1280,
  "height": 720,
- "medianMs": 19.8,
- "p95Ms": 87.2,
+ "medianMs": 63.7,
+ "p95Ms": 223.2,
  "drawCalls": 1183,
  "triangles": 2579936,
- "textures": 79,
- "geometries": 88
+ "textures": 73,
+ "geometries": 78
 }

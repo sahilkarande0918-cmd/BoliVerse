@@ -38,12 +38,13 @@ Across all runs: 21 Prisma calls over 3 renders. Observed misrecognitions: “to
 ## Rendering
 
 - Studio at 1440×900, High quality (shadows 2048, bloom, ACES, 9k grass tufts): **100–144 fps** in the FPS readout on this machine. Mobile was not measured on a physical device.
+- Post-realism frame timings (High 8.7 ms median, Ultra captures) and before/after images: `docs/REALISM_AUDIT.md`.
 - Responsive layout verified by screenshot at 1440×900, 1366×768 and 390×844, with no horizontal overflow (`scrollWidth == innerWidth`).
 
 ## Video export
 
 - In-app: a 10 s bridge flythrough at **1280×720 MP4 H.264 took ~6 s to render, 10.5 MB**. Verified playable: `<video>` metadata 1280×720, duration 10.0 s, and non-black frame content at 5 s.
-- Demo film: **1920×1080, 63.0 s, H.264 + AAC, 44.4 MB**, rendered by the engine itself (`src/dev/demoFilm.ts`).
+- Demo film (re-rendered 9 Nov 2026 with the realism upgrade, High quality): **1920×1080, 62.1 s, H.264 + AAC, 55.9 MB** (x264 CRF 21 re-encode of the 114 MB in-browser encode), rendered by the engine itself (`src/dev/demoFilm.ts`). All 7 synthetic Timbre utterances were transcribed live by Prisma (STT round trip 288–853 ms) and planned by the local parser. Prisma misheard the Marathi rebuild line "त्याच जागी दगडी पूल बांधा" as "कैद से आगे दगड़ी पुल बांधा"; the stone bridge was still built. Full log: `public/demo/demo-run.json`.
 - Browsers tested for export: Chromium only. Firefox and Safari export are not tested.
 
 ## Not done or not verified

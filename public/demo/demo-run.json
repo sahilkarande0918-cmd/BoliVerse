@@ -1,6 +1,6 @@
 {
- "when": "2026-11-09T11:34:31.985Z",
- "total": 61.57,
+ "when": "2026-11-09T15:17:32.687Z",
+ "total": 62.07400000000001,
  "audioCodec": "aac",
  "beats": [
   {
@@ -8,9 +8,9 @@
    "voice": "Gnani Timbre (synthetic)",
    "transcript": "एक सुंदर भारतीय गाँव बनाओ। बीच में नदी हो और लकड़ी का पुल हो।",
    "language": "hi-IN",
-   "sttMs": 454,
-   "providerMs": 164,
-   "ms": 462,
+   "sttMs": 853,
+   "providerMs": 173,
+   "ms": 857,
    "ops": [
     "CREATE_SCENE",
     "CREATE_OBJECT",
@@ -23,9 +23,9 @@
    "voice": "Gnani Timbre (synthetic)",
    "transcript": "bridge थोड़ा बड़ा करो और sunset कर दो।",
    "language": "hi-IN",
-   "sttMs": 237,
-   "providerMs": 110,
-   "ms": 238,
+   "sttMs": 523,
+   "providerMs": 109,
+   "ms": 524,
    "ops": [
     "MODIFY_OBJECT",
     "SET_TIME_OF_DAY"
@@ -35,11 +35,11 @@
   {
    "said": "Ab bridge tod do.",
    "voice": "Gnani Timbre (synthetic)",
-   "transcript": "A bridge, Tod Do.",
-   "language": "en-IN",
-   "sttMs": 157,
-   "providerMs": 75,
-   "ms": 158,
+   "transcript": "आप bridge तोड़ दो।",
+   "language": "hi-IN",
+   "sttMs": 288,
+   "providerMs": 64,
+   "ms": 288,
    "ops": [
     "DESTROY_STRUCTURE"
    ],
@@ -48,11 +48,11 @@
   {
    "said": "त्याच जागी दगडी पूल बांधा.",
    "voice": "Gnani Timbre (synthetic)",
-   "transcript": "त्याच जागी दगडी pool बांधा.",
+   "transcript": "कैद से आगे दगड़ी पुल बांधा।",
    "language": "hi-IN",
-   "sttMs": 217,
-   "providerMs": 121,
-   "ms": 218,
+   "sttMs": 303,
+   "providerMs": 109,
+   "ms": 304,
    "ops": [
     "CREATE_OBJECT"
    ],
@@ -63,9 +63,9 @@
    "voice": "Gnani Timbre (synthetic)",
    "transcript": "Build a luxury mansion with a swimming pool.",
    "language": "en-IN",
-   "sttMs": 193,
-   "providerMs": 123,
-   "ms": 194,
+   "sttMs": 353,
+   "providerMs": 104,
+   "ms": 354,
    "ops": [
     "CREATE_OBJECT"
    ],
@@ -76,9 +76,9 @@
    "voice": "Gnani Timbre (synthetic)",
    "transcript": "mansion के अंदर sofa, kaleen और jhoomar लगाओ।",
    "language": "hi-IN",
-   "sttMs": 229,
-   "providerMs": 143,
-   "ms": 229,
+   "sttMs": 526,
+   "providerMs": 144,
+   "ms": 527,
    "ops": [
     "CREATE_OBJECT",
     "CREATE_OBJECT",
@@ -91,9 +91,9 @@
    "voice": "Gnani Timbre (synthetic)",
    "transcript": "dining table और bed भी लगाओ और रात कर दो।",
    "language": "hi-IN",
-   "sttMs": 255,
-   "providerMs": 113,
-   "ms": 256,
+   "sttMs": 412,
+   "providerMs": 141,
+   "ms": 413,
    "ops": [
     "CREATE_OBJECT",
     "CREATE_OBJECT",

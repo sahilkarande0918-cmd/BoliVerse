@@ -17,7 +17,7 @@ BoliVerse is a multilingual (English / Hindi / Marathi / Hinglish) voice-control
 ## Commands
 ```bash
 npm run dev        # Vite on :5173; also serves api/*.ts locally (reads .env.local)
-npm test           # Vitest (84 tests)
+npm test           # Vitest (87 tests)
 npm run typecheck  # tsc --noEmit
 npm run build      # tsc + vite build
 vercel deploy --prod --yes

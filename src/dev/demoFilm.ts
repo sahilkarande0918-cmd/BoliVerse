@@ -98,7 +98,8 @@ export async function makeDemoFilm(log: (s: string) => void = console.log) {
   const g = comp.getContext('2d')!
   const aCodec = (await canEncodeAudio('aac', { numberOfChannels: 1, sampleRate: 48000 })) ? 'aac' : 'opus'
   const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() })
-  const video = new CanvasSource(comp, { codec: 'avc', bitrate: QUALITY_HIGH, keyFrameInterval: 2 })
+  const video = new CanvasSource(comp, { codec: 'avc', bitrate: 6e6, // ponytail: fixed 6 Mbps keeps the repo file < 100 MB (QUALITY_HIGH gave 114 MB on dense grass)
+    keyFrameInterval: 2 })
   const audio = new AudioBufferSource({ codec: aCodec, bitrate: QUALITY_HIGH })
   output.addVideoTrack(video, { frameRate: FPS })
   output.addAudioTrack(audio)
