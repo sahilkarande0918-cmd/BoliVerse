@@ -9,6 +9,6 @@ BoliVerse ships **no third-party 3D models, textures, HDRIs, music or footage.**
 | Environment lighting | drei `<Environment>` with procedural `<Lightformer>` cards (no HDR file) | Project's own |
 | Demo film voices | Generated with Gnani Timbre v3.0 through the project's API key | Gnani API terms |
 | Demo film / poster (`public/demo/`) | Rendered by the BoliVerse engine itself | Project's own |
-| Fonts: Geist, Geist Mono, Instrument Serif | Google Fonts | SIL Open Font License 1.1 |
+| Fonts: Jost, Geist Mono | Google Fonts | SIL Open Font License 1.1 |
 
 Third-party code libraries and their licences are listed in `docs/TECH_STACK.md`.

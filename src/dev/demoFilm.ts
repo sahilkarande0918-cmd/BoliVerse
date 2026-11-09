@@ -18,15 +18,15 @@ const W = 1920, H = 1080, FPS = 30
 
 interface Beat { label: string; lang: string; langName: string; ttsLang: string; say: string; shot: CameraPreset | 'hold' | 'aerial' | 'overview'; shotSec: number }
 const BEATS: Beat[] = [
-  { label: 'Create', lang: 'hi-IN', langName: 'Hindi', ttsLang: 'hi-IN', say: 'एक सुंदर भारतीय गाँव बनाओ, बीच में नदी हो, और लकड़ी का पुल हो।', shot: 'establishing', shotSec: 5.5 },
+  { label: 'Create', lang: 'hi-IN', langName: 'Hindi', ttsLang: 'hi-IN', say: 'एक सुंदर भारतीय गाँव बनाओ, बीच में नदी हो, और लकड़ी का पुल हो।', shot: 'establishing', shotSec: 5 },
   { label: 'Edit', lang: 'hi-IN', langName: 'Hinglish', ttsLang: 'hi-IN', say: 'Bridge thoda bada karo, aur sunset kar do.', shot: 'bridge_flythrough', shotSec: 4.5 },
-  { label: 'Destroy', lang: 'hi-IN', langName: 'Hinglish', ttsLang: 'hi-IN', say: 'Ab bridge tod do.', shot: 'destruction', shotSec: 5.5 },
+  { label: 'Destroy', lang: 'hi-IN', langName: 'Hinglish', ttsLang: 'hi-IN', say: 'Ab bridge tod do.', shot: 'destruction', shotSec: 5 },
   { label: 'Rebuild', lang: 'mr-IN', langName: 'Marathi', ttsLang: 'mr-IN', say: 'त्याच जागी दगडी पूल बांधा.', shot: 'river_reveal', shotSec: 4 },
-  { label: 'Mansion', lang: 'en-IN', langName: 'English', ttsLang: 'en-IN', say: 'Build a luxury mansion with a swimming pool.', shot: 'mansion_reveal', shotSec: 5 },
-  { label: 'Interior', lang: 'hi-IN', langName: 'Hinglish', ttsLang: 'hi-IN', say: 'Mansion ke andar sofa, kaleen aur jhoomar lagao.', shot: 'aerial', shotSec: 3.5 },
-  { label: 'Night', lang: 'hi-IN', langName: 'Hindi', ttsLang: 'hi-IN', say: 'डाइनिंग टेबल और बेड भी लगाओ, और रात कर दो।', shot: 'interior', shotSec: 7 },
+  { label: 'Mansion', lang: 'en-IN', langName: 'English', ttsLang: 'en-IN', say: 'Build a luxury mansion with a swimming pool.', shot: 'mansion_reveal', shotSec: 4.5 },
+  { label: 'Interior', lang: 'hi-IN', langName: 'Hinglish', ttsLang: 'hi-IN', say: 'Mansion ke andar sofa, kaleen aur jhoomar lagao.', shot: 'aerial', shotSec: 3.2 },
+  { label: 'Night', lang: 'hi-IN', langName: 'Hindi', ttsLang: 'hi-IN', say: 'डाइनिंग टेबल और बेड भी लगाओ, और रात कर दो।', shot: 'interior', shotSec: 6.5 },
 ]
-const TITLE = 3, END = 3.5
+const TITLE = 2.8, END = 3.2
 
 interface Prepared { beat: Beat; clip: AudioBuffer; transcript: string; language: string; sttMs: number; providerMs: number; model: string }
 
@@ -48,9 +48,6 @@ async function prepare(ctx: AudioContext, log: (s: string) => void): Promise<Pre
   return out
 }
 
-function rr(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
-  g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath()
-}
 function wrap(g: CanvasRenderingContext2D, text: string, maxW: number) {
   const words = text.split(' '), lines: string[] = []
   let line = ''
@@ -60,6 +57,9 @@ function wrap(g: CanvasRenderingContext2D, text: string, maxW: number) {
 }
 
 export async function makeDemoFilm(log: (s: string) => void = console.log) {
+  for (let i = 0; i < 100 && !(window as unknown as { __r3f?: RootState }).__r3f; i++) await new Promise((r) => setTimeout(r, 100))
+  if (!(window as unknown as { __r3f?: RootState }).__r3f) throw new Error('Studio renderer not ready — open #/studio first')
+  await Promise.all(['300 40px Jost', '400 40px Jost', '500 40px Jost', '400 20px "Geist Mono"'].map((f) => document.fonts.load(f)))
   const actx = new AudioContext()
   log('Generating Timbre voices and transcribing with Prisma…')
   const prep = await prepare(actx, log)
@@ -184,94 +184,98 @@ export async function makeDemoFilm(log: (s: string) => void = console.log) {
   return { bytes: buf.byteLength, total }
 
   function drawOverlay(g: CanvasRenderingContext2D, seg: Seg, local: number, time: number, res: typeof results, prep: Prepared[], total: number) {
+    // warm editorial overlays: ivory surfaces, charcoal Jost type, taupe secondary text
     const ease = (x: number) => Math.min(1, Math.max(0, x))
-    // cinematic letterbox gradient
-    const grd = g.createLinearGradient(0, H * 0.55, 0, H)
-    grd.addColorStop(0, 'rgba(11,13,16,0)'); grd.addColorStop(1, 'rgba(11,13,16,0.78)')
-    g.fillStyle = grd; g.fillRect(0, H * 0.55, W, H * 0.45)
-    g.fillStyle = 'rgba(11,13,16,0.35)'; g.fillRect(0, 0, W, 90)
-    // brand
-    g.fillStyle = '#e9e7e2'; g.font = '600 26px Geist'; g.textBaseline = 'middle'
-    g.fillText('BoliVerse', 120, 48)
-    g.strokeStyle = '#D9A75A'; g.lineWidth = 3.5; g.beginPath(); g.moveTo(72, 62); g.lineTo(88, 34); g.lineTo(104, 62); g.closePath(); g.stroke()
-    g.fillStyle = 'rgba(233,231,226,0.55)'; g.font = '400 20px Geist'
-    g.fillText('Live engine render · voices: Gnani Timbre (synthetic) → transcribed live by Gnani Prisma', 260, 48)
+    const IVORY = 'rgba(242,237,231,0.94)', INK = '#2e2a27', TAUPE = '#776d66', FAINT = '#a49990'
+    const arch = (x: number, y: number, s: number, color: string) => {
+      g.strokeStyle = color; g.lineWidth = s * 0.11
+      g.beginPath(); g.moveTo(x, y + s); g.lineTo(x, y + s * 0.5); g.arc(x + s / 2, y + s * 0.5, s / 2, Math.PI, 0); g.lineTo(x + s, y + s); g.stroke()
+      g.fillStyle = color; g.beginPath(); g.arc(x + s / 2, y + s * 0.62, s * 0.11, 0, 7); g.fill()
+    }
+    // header band
+    g.fillStyle = 'rgba(242,237,231,0.88)'; g.fillRect(0, 0, W, 84)
+    arch(72, 26, 30, INK)
+    g.fillStyle = INK; g.font = '500 28px Jost'; g.textBaseline = 'middle'; g.fillText('boliverse', 118, 44)
+    g.fillStyle = TAUPE; g.font = '400 19px Jost'
+    g.fillText('Live engine render  ·  voices are Gnani Timbre (synthetic), transcribed live by Gnani Prisma', 300, 44)
 
     if (seg.kind === 'title') {
       const a = ease(local * 2.2)
-      g.globalAlpha = a
-      g.fillStyle = '#e9e7e2'; g.font = '600 150px Geist'; g.textBaseline = 'alphabetic'
-      g.fillText('YOUR WORDS.', 120, 720)
-      g.fillStyle = '#ECC68A'; g.fillText('YOUR WORLD.', 120, 860)
-      g.fillStyle = 'rgba(233,231,226,0.8)'; g.font = '300 38px Geist'
-      g.fillText('Build living 3D worlds. Just by speaking.', 124, 940)
+      const grd = g.createLinearGradient(0, 0, W * 0.6, 0)
+      grd.addColorStop(0, `rgba(231,224,216,${0.92 * a})`); grd.addColorStop(1, 'rgba(231,224,216,0)')
+      g.fillStyle = grd; g.fillRect(0, 84, W * 0.6, H - 84)
+      g.globalAlpha = a; g.textBaseline = 'alphabetic'
+      g.fillStyle = TAUPE; g.font = '500 20px Jost'; g.fillText('V O I C E   T O   3 D   S T U D I O', 124, 430)
+      g.fillStyle = INK; g.font = '300 132px Jost'
+      g.fillText('Your words.', 116, 590); g.fillText('Your world.', 116, 730)
+      g.font = '400 36px Jost'; g.fillStyle = INK; g.fillText('Build living 3D worlds. Just by speaking.', 122, 820)
       g.globalAlpha = 1
       return
     }
     if (seg.kind === 'end') {
-      g.fillStyle = `rgba(11,13,16,${0.55 * ease(local * 2)})`; g.fillRect(0, 0, W, H)
-      g.globalAlpha = ease(local * 2)
-      g.textBaseline = 'alphabetic'
-      g.fillStyle = '#e9e7e2'; g.font = '600 96px Geist'; g.fillText('Speak a world into existence.', 120, 470)
-      g.fillStyle = '#ECC68A'; g.font = '500 44px Geist'; g.fillText('boliverse.vercel.app', 124, 560)
-      g.fillStyle = 'rgba(233,231,226,0.75)'; g.font = '400 30px Geist'
-      g.fillText('Gnani Prisma v3.0 speech · Groq-planned fallback · Rapier physics · in-browser MP4 export', 124, 630)
-      g.fillText('github.com/sahilkarande0918-cmd/BoliVerse   ·   #GnaniAI  #GreatIndianAIInternshipChallenge', 124, 680)
+      g.fillStyle = `rgba(231,224,216,${0.94 * ease(local * 2.4)})`; g.fillRect(0, 0, W, H)
+      g.globalAlpha = ease(local * 2.4); g.textBaseline = 'alphabetic'
+      arch(124, 250, 70, INK)
+      g.fillStyle = INK; g.font = '300 104px Jost'; g.fillText('Speak a world into existence.', 116, 470)
+      g.font = '400 42px Jost'; g.fillText('boliverse.vercel.app', 122, 560)
+      g.fillStyle = INK; g.fillRect(122, 600, 1100, 1)
+      g.fillStyle = TAUPE; g.font = '400 28px Jost'
+      g.fillText('Gnani Prisma v3.0 speech  ·  Groq fallback planner  ·  Rapier physics  ·  in-browser MP4 export', 122, 660)
+      g.fillText('github.com/sahilkarande0918-cmd/BoliVerse     #GnaniAI   #GreatIndianAIInternshipChallenge', 122, 710)
       g.globalAlpha = 1
       return
     }
     const p = seg.p!, idx = seg.idx!
-    // step counter
-    g.textBaseline = 'middle'; g.font = '500 22px Geist Mono'; g.fillStyle = '#D9A75A'
-    g.fillText(`${String(idx + 1).padStart(2, '0')} / ${String(prep.length).padStart(2, '0')}`, W - 330, 48)
-    g.fillStyle = '#e9e7e2'; g.font = '600 24px Geist'; g.fillText(p.beat.label.toUpperCase(), W - 220, 48)
+    // step counter in the header band
+    g.textBaseline = 'middle'; g.fillStyle = FAINT; g.font = '400 20px Geist Mono'
+    g.fillText(`${String(idx + 1).padStart(2, '0')} / ${String(prep.length).padStart(2, '0')}`, W - 330, 44)
+    g.fillStyle = INK; g.font = '500 20px Jost'; g.fillText(p.beat.label.toUpperCase().split('').join(' '), W - 230, 44)
 
-    // lower third
-    const x = 120, y = H - 300, w = 1100
-    g.fillStyle = 'rgba(21,24,29,0.82)'; rr(g, x - 28, y - 30, w + 56, 250, 14); g.fill()
-    g.strokeStyle = 'rgba(160,172,190,0.18)'; g.lineWidth = 1.5; g.stroke()
+    // lower third: ivory card
+    const x = 120, y = H - 292, w = 1060
+    g.fillStyle = IVORY; g.fillRect(x - 40, y - 44, w + 80, 262)
+    g.fillStyle = INK; g.fillRect(x - 40, y - 44, 3, 262)
     g.textBaseline = 'alphabetic'
     if (seg.kind === 'speak') {
-      g.fillStyle = '#ECC68A'; g.font = '600 20px Geist'
-      g.fillText(`SPEAKING · ${p.beat.langName.toUpperCase()}`, x, y + 10)
-      // waveform from the real clip envelope
+      g.fillStyle = TAUPE; g.font = '500 18px Jost'
+      g.fillText(`S P E A K I N G   ·   ${p.beat.langName.toUpperCase().split('').join(' ')}`, x, y)
       const ch = p.clip.getChannelData(0), sr = p.clip.sampleRate
       const tt = local * seg.dur - 0.15
-      for (let b = 0; b < 90; b++) {
-        const s = Math.floor((tt - 0.6 + b * (0.6 / 90)) * sr)
+      for (let b = 0; b < 110; b++) {
+        const s = Math.floor((tt - 0.6 + b * (0.6 / 110)) * sr)
         let e = 0
         for (let j = 0; j < 256; j++) { const v = ch[s + j] ?? 0; e += v * v }
         const amp = Math.min(1, Math.sqrt(e / 256) * 9)
-        const bh = 6 + amp * 110
-        g.fillStyle = `rgba(236,198,138,${0.35 + amp * 0.65})`
-        g.fillRect(x + b * 12, y + 110 - bh / 2, 6, bh)
+        const bh = 3 + amp * 100
+        g.fillStyle = `rgba(46,42,39,${0.25 + amp * 0.75})`
+        g.fillRect(x + b * 9.5, y + 92 - bh / 2, 2.5, bh)
       }
-      g.fillStyle = 'rgba(233,231,226,0.55)'; g.font = '400 20px Geist'
-      g.fillText('Audio is captured, then sent through the server relay to Gnani Prisma', x, y + 200)
+      g.fillStyle = FAINT; g.font = '400 19px Jost'
+      g.fillText('Audio goes through the server relay to Gnani Prisma for transcription', x, y + 188)
     } else {
       const r = res[idx]
-      g.fillStyle = '#ECC68A'; g.font = '600 20px Geist'
-      g.fillText(`HEARD · GNANI PRISMA ${p.model.replace('prisma-', '')} · ${p.language} · ${Math.round(p.sttMs)} ms`, x, y + 10)
-      g.fillStyle = '#e9e7e2'; g.font = '500 40px Geist'
-      wrap(g, p.transcript, w).slice(0, 2).forEach((l, k) => g.fillText(l, x, y + 70 + k * 50))
-      g.font = '500 22px Geist Mono'; g.fillStyle = 'rgba(236,198,138,0.95)'
-      g.fillText((r?.ops ?? []).join('  →  '), x, y + 180)
-      g.fillStyle = 'rgba(233,231,226,0.6)'; g.font = '400 20px Geist'
-      g.fillText(`${r?.planner === 'groq' ? 'Groq planner' : 'Local multilingual parser'} · voice → world ${r?.ms ?? '…'} ms`, x, y + 212)
-      // causal status
+      g.fillStyle = TAUPE; g.font = '500 18px Jost'
+      g.fillText(`H E A R D   ·   G N A N I   P R I S M A   ${p.model.replace('prisma-', '')}   ·   ${p.language}   ·   ${Math.round(p.sttMs)} ms`, x, y)
+      g.fillStyle = INK; g.font = '300 42px Jost'
+      wrap(g, p.transcript, w).slice(0, 2).forEach((l, k) => g.fillText(l, x, y + 62 + k * 50))
+      g.font = '400 19px Geist Mono'; g.fillStyle = TAUPE
+      g.fillText((r?.ops ?? []).join('   ·   '), x, y + 164)
+      g.fillStyle = FAINT; g.font = '400 19px Jost'
+      g.fillText(`${r?.planner === 'groq' ? 'Groq planner' : 'Local multilingual parser'}   ·   end of speech to world applied in ${r?.ms ?? '…'} ms`, x, y + 196)
       const route = computeRoute(st.getState().world)
       if (st.getState().world.entities.some((e) => e.type === 'river')) {
-        const label = route.ok ? `Route open · ${route.via}` : 'Route blocked · no crossing'
-        g.font = '600 22px Geist'
+        const label = route.ok ? `Route open  ·  ${route.via}` : 'Route blocked  ·  no crossing'
+        g.font = '400 21px Jost'
         const tw = g.measureText(label).width
-        g.fillStyle = 'rgba(21,24,29,0.82)'; rr(g, W - 160 - tw - 40, H - 120, tw + 60, 50, 25); g.fill()
-        g.fillStyle = route.ok ? '#7cb58a' : '#e07a63'; g.beginPath(); g.arc(W - 160 - tw - 12, H - 95, 7, 0, 7); g.fill()
-        g.fillStyle = '#e9e7e2'; g.fillText(label, W - 160 - tw + 4, H - 88)
+        const bx = W - 140 - tw - 56
+        g.fillStyle = IVORY; g.fillRect(bx, H - 128, tw + 70, 56)
+        g.fillStyle = route.ok ? '#5e7d66' : '#a65a48'; g.beginPath(); g.arc(bx + 26, H - 100, 6, 0, 7); g.fill()
+        g.fillStyle = INK; g.textBaseline = 'middle'; g.fillText(label, bx + 44, H - 99)
       }
     }
     // progress hairline
-    g.fillStyle = 'rgba(255,255,255,0.12)'; g.fillRect(0, H - 4, W, 4)
-    g.fillStyle = '#D9A75A'; g.fillRect(0, H - 4, (time / total) * W, 4)
+    g.fillStyle = 'rgba(242,237,231,0.5)'; g.fillRect(0, H - 3, W, 3)
+    g.fillStyle = INK; g.fillRect(0, H - 3, (time / total) * W, 3)
   }
 }
 

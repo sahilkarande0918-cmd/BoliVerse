@@ -21,7 +21,7 @@ Every tool was checked for licence, maintenance, browser support, performance co
 | Gnani Prisma v3.0 (STT) | API | Gnani terms | Speech to text, with `indic-auto` detection, `codemix` output and `keyterms` biasing (verified to fix "tod do" → "तो दो"). |
 | Gnani Timbre v3.0 (TTS) | API | Gnani terms | Optional spoken confirmations. Also produced the synthetic voices in the demo film. |
 | Groq `openai/gpt-oss-20b` | API | Groq terms | Fallback planner for complex commands, using JSON-schema output that Zod re-validates. |
-| Google Fonts: Geist, Geist Mono, Instrument Serif | – | OFL | Typography. |
+| Google Fonts: Jost, Geist Mono | – | OFL | Editorial typography (Jost) and tabular mono for ops. |
 
 ## Rejected or deferred
 

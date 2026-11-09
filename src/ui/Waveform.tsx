@@ -17,7 +17,7 @@ export function Waveform({ phase }: { phase: Phase }) {
       if (c.width !== w * dpr) { c.width = w * dpr; c.height = h * dpr }
       g.setTransform(dpr, 0, 0, dpr, 0, 0)
       g.clearRect(0, 0, w, h)
-      const bars = Math.floor(w / 4)
+      const bars = Math.floor(w / 5)
       const head = waveHead()
       const seg = Math.floor(wave.length / bars)
       for (let i = 0; i < bars; i++) {
@@ -30,8 +30,8 @@ export function Waveform({ phase }: { phase: Phase }) {
           amp = reduced ? 0.15 : 0.12 + 0.18 * Math.max(0, Math.sin(i * 0.35 - t / 160))
         } else amp = 0.04
         const bh = Math.max(1.5, amp * h * 0.9)
-        g.fillStyle = phase === 'error' ? 'rgba(224,122,99,0.6)' : phase === 'listening' ? `rgba(236,198,138,${0.45 + amp * 0.55})` : 'rgba(160,172,190,0.35)'
-        g.fillRect(i * 4, (h - bh) / 2, 2, bh)
+        g.fillStyle = phase === 'error' ? 'rgba(166,90,72,0.55)' : phase === 'listening' ? `rgba(52,48,45,${0.35 + amp * 0.65})` : 'rgba(58,52,48,0.22)'
+        g.fillRect(i * 5, (h - bh) / 2, 1.5, bh)
       }
       raf = requestAnimationFrame(draw)
     }

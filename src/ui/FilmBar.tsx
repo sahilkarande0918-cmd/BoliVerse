@@ -4,18 +4,18 @@ import { useStudio } from '../store'
 import { Icon } from './Icon'
 
 const SHOTS: [CameraPreset, string, string][] = [
-  ['establishing', 'Establishing', 'High arc descending into the village'],
+  ['establishing', 'Establishing', 'A high arc that settles into the village'],
   ['river_reveal', 'River reveal', 'Skims the water, rises to the village'],
   ['bridge_flythrough', 'Bridge flythrough', 'Low over the river, up and over the bridge'],
   ['under_bridge', 'Under the bridge', 'Passes beneath the deck'],
-  ['destruction', 'Destruction', 'Slow push-in on the crossing'],
-  ['sunset_panorama', 'Panorama', 'Wide lateral pan from the west bank'],
-  ['orbit', 'Orbit', '360° around the subject'],
-  ['mansion_reveal', 'Mansion reveal', 'Sweeping arc onto the glass façade'],
-  ['interior', 'Interior walkthrough', 'Eye-level glide through the furnished rooms'],
+  ['destruction', 'Destruction', 'A slow push-in on the crossing'],
+  ['sunset_panorama', 'Panorama', 'A wide lateral pan from the west bank'],
+  ['orbit', 'Orbit', 'A full circle around the subject'],
+  ['mansion_reveal', 'Mansion reveal', 'A sweeping arc onto the glass façade'],
+  ['interior', 'Interior walkthrough', 'An eye-level glide through the rooms'],
 ]
 
-// Film mode: a shot track over a time ruler, plus capture/export.
+// Film mode: a shot list, a single-clip timeline, and capture/export.
 export function Timeline() {
   const shot = useStudio((s) => s.shot)
   const recording = useStudio((s) => s.recording)
@@ -31,50 +31,49 @@ export function Timeline() {
   const meta = SHOTS.find((s) => s[0] === preset)!
 
   return (
-    <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_280px] lg:px-5">
+    <div className="grid grid-cols-1 gap-6 p-5 lg:grid-cols-[minmax(0,1fr)_300px] lg:p-6">
       <div className="min-w-0">
-        <div className="mb-2 flex items-baseline gap-3">
+        <div className="flex items-baseline gap-4">
           <span className="eyebrow">Shot</span>
-          <span className="text-[13px] font-medium">{meta[1]}</span>
-          <span className="truncate text-[11px] text-[var(--muted)]">{meta[2]}</span>
+          <span className="text-[15px]">{meta[1]}</span>
+          <span className="truncate text-[12.5px] text-[var(--muted)] max-sm:hidden">{meta[2]}</span>
         </div>
-        <div className="scroll-thin flex gap-1 overflow-x-auto pb-1">
-          {SHOTS.map(([k, l]) => (
-            <button key={k} onClick={() => setPreset(k)} className={`h-7 shrink-0 rounded-md px-2.5 text-[11.5px] transition ${preset === k ? 'bg-[var(--accent)]/15 text-[var(--accent-2)] ring-1 ring-[var(--accent)]/50' : 'text-[var(--muted)] ring-1 ring-[var(--line)] hover:text-[var(--text)]'}`}>{l}</button>
-          ))}
-        </div>
-        {/* ruler + clip */}
-        <div className="mt-3">
-          <div className="tnum flex justify-between font-mono text-[9.5px] text-[var(--faint)]">
-            {Array.from({ length: 6 }, (_, i) => <span key={i}>{Math.round((i * 20) / 5)}s</span>)}
+        <div className="scroll-thin mt-2 overflow-x-auto">
+          <div className="tabs sm min-w-max">
+            {SHOTS.map(([k, l]) => <button key={k} aria-selected={preset === k} onClick={() => setPreset(k)}>{l}</button>)}
           </div>
-          <div className="relative mt-1 h-8 rounded-md bg-[var(--raised)] ring-1 ring-[var(--line)]">
-            <div className="absolute inset-y-1 left-1 flex items-center rounded-[4px] bg-[var(--accent)]/20 px-2 text-[10.5px] text-[var(--accent-2)] ring-1 ring-[var(--accent)]/40 transition-[width] duration-200" style={{ width: `calc(${(dur / 20) * 100}% - 8px)` }}>
+        </div>
+        <div className="mt-4">
+          <div className="tnum flex justify-between font-mono text-[10px] text-[var(--faint)]">
+            {Array.from({ length: 6 }, (_, i) => <span key={i}>{(i * 20) / 5}s</span>)}
+          </div>
+          <div className="relative mt-1.5 h-9 border-y border-[var(--line)]">
+            <div className="absolute inset-y-1.5 left-0 flex items-center rounded-[2px] bg-[var(--sand)] px-3 text-[11.5px] text-[var(--text)] transition-[width] duration-300" style={{ width: `${(dur / 20) * 100}%` }}>
               <span className="truncate">{meta[1]} · {dur}s</span>
             </div>
-            {busy && <div className="absolute inset-y-0 w-px bg-[var(--text)]" style={{ left: `${recording.progress * (dur / 20) * 100}%` }} />}
+            {busy && <div className="absolute inset-y-0 w-px bg-[var(--ink)]" style={{ left: `${recording.progress * (dur / 20) * 100}%` }} />}
           </div>
-          <input type="range" min={4} max={20} value={dur} onChange={(e) => setDur(+e.target.value)} className="mt-2 w-full accent-[var(--accent)]" aria-label="Shot duration in seconds" />
+          <input type="range" min={4} max={20} value={dur} onChange={(e) => setDur(+e.target.value)} className="mt-3 w-full accent-[var(--ink)]" aria-label="Shot duration in seconds" />
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 lg:border-l lg:border-[var(--line)] lg:pl-5">
-        <div className="flex items-center gap-2">
-          <span className="eyebrow w-14">Aspect</span>
-          <div className="seg">{(['16:9', '9:16'] as const).map((a) => <button key={a} aria-selected={aspect === a} onClick={() => setAspect(a)}>{a}</button>)}</div>
-          <span className="ml-auto text-[10.5px] text-[var(--faint)]">720p · 30 fps</span>
+      <div className="flex flex-col gap-4 lg:border-l lg:border-[var(--line)] lg:pl-6">
+        <div className="flex items-center gap-4">
+          <span className="eyebrow">Aspect</span>
+          <div className="tabs sm">{(['16:9', '9:16'] as const).map((a) => <button key={a} aria-selected={aspect === a} onClick={() => setAspect(a)}>{a}</button>)}</div>
+          <span className="ml-auto text-[11.5px] text-[var(--faint)]">720p · 30 fps</span>
         </div>
         <div className="flex gap-2">
           <button className="btn-line flex-1" onClick={() => go(false)} disabled={busy}><Icon name="play" size={12} />Preview</button>
-          <button className="btn-primary flex-1" onClick={() => go(true)} disabled={busy}><Icon name="rec" size={12} />{busy ? `${Math.round(recording.progress * 100)}%` : 'Record'}</button>
+          <button className="btn-ink flex-1 !h-[34px]" onClick={() => go(true)} disabled={busy}>{busy ? `${Math.round(recording.progress * 100)}%` : 'Record'}</button>
         </div>
-        <div className="min-h-[30px] text-[11px]">
+        <div className="min-h-[34px] text-[12px]">
           {recording.state === 'ready' && recording.url ? (
-            <a className="btn-line w-full !justify-start" href={recording.url} download={recording.fileName}>
-              <Icon name="down" size={13} /><span className="truncate">{recording.format} · {((recording.sizeBytes ?? 0) / 1e6).toFixed(1)} MB · {recording.durationSec}s · no audio</span>
+            <a className="link-quiet inline-flex items-center gap-2" href={recording.url} download={recording.fileName}>
+              <Icon name="down" size={13} />Download {recording.format}, {((recording.sizeBytes ?? 0) / 1e6).toFixed(1)} MB, {recording.durationSec}s, no audio
             </a>
           ) : recording.state === 'error' ? <span className="text-[var(--bad)]">{recording.message}</span>
-            : <span className="text-[var(--faint)]">Renders this live world frame by frame. MP4 (H.264) via WebCodecs where supported, otherwise labelled WebM.</span>}
+            : <span className="leading-snug text-[var(--faint)]">Renders this live world frame by frame. MP4 (H.264) where WebCodecs supports it, otherwise labelled WebM.</span>}
         </div>
       </div>
     </div>

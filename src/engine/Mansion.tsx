@@ -23,6 +23,11 @@ const M = {
   leaf: new THREE.MeshStandardMaterial({ color: '#3f6a34', roughness: 0.9, flatShading: true }),
   pot: new THREE.MeshStandardMaterial({ color: '#b4673f', roughness: 0.9 }),
 }
+const ART = {
+  saffron: new THREE.MeshStandardMaterial({ color: '#d9822b', roughness: 0.8 }),
+  indigo: new THREE.MeshStandardMaterial({ color: '#2f3f7a', roughness: 0.8 }),
+  cream: new THREE.MeshStandardMaterial({ color: '#efe3c8', roughness: 0.8 }),
+}
 const fabricCache = new Map<string, THREE.MeshStandardMaterial>()
 const fabric = (c: Color | undefined, fallback: string) => {
   const key = c ?? fallback
@@ -53,6 +58,22 @@ export function Mansion({ e }: { e: Entity }) {
       {/* warm interior lighting (no shadows) so the furnished rooms read at night */}
       <pointLight position={[-5, F + 3.4, -1]} intensity={22} distance={16} decay={2} color="#ffd6a0" />
       <pointLight position={[3.5, F + 3.4, 1]} intensity={18} distance={14} decay={2} color="#ffd6a0" />
+      {/* living-room feature wall: wood panel, framed artwork, floor lamp */}
+      <B p={[-5.6, F + 1.9, -6.96]} s={[8.4, 3.6, 0.06]} m={M.clad} cast={false} />
+      <B p={[-5.6, F + 2.2, -6.9]} s={[2.9, 1.7, 0.05]} m={M.dark} cast={false} />
+      <B p={[-6.3, F + 2.2, -6.86]} s={[1.3, 1.5, 0.03]} m={ART.saffron} cast={false} />
+      <B p={[-4.95, F + 2.45, -6.86]} s={[1.2, 0.95, 0.03]} m={ART.indigo} cast={false} />
+      <B p={[-4.95, F + 1.7, -6.86]} s={[1.2, 0.45, 0.03]} m={ART.cream} cast={false} />
+      <mesh geometry={CYL} position={[-9.2, F + 0.8, -5.6]} scale={[0.03, 1.6, 0.03]} material={M.dark} />
+      <mesh geometry={CYL} position={[-9.2, F + 1.65, -5.6]} scale={[0.28, 0.32, 0.28]} material={SHARED.lamp} />
+      {/* kitchen pendants + bedroom wall light */}
+      {[4.9, 6.2, 7.5].map((x) => (
+        <group key={x} position={[x, F + 2.75, -4.4]}>
+          <mesh geometry={CYL} position={[0, 0.6, 0]} scale={[0.012, 1.2, 0.012]} material={M.dark} />
+          <mesh material={SHARED.lamp}><sphereGeometry args={[0.13, 12, 10]} /></mesh>
+        </group>
+      ))}
+      <B p={[10, F + 2.3, 2]} s={[0.05, 0.12, 2.4]} m={SHARED.lamp} cast={false} />
       {/* kitchen under the upper floor */}
       <B p={[6.2, F + 0.48, -4.4]} s={[3.6, 0.95, 1.1]} m={M.white} />
       <B p={[6.2, F + 0.97, -4.4]} s={[3.7, 0.05, 1.2]} m={M.dark} />

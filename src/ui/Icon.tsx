@@ -22,17 +22,22 @@ const P: Record<string, string> = {
 }
 export function Icon({ name, size = 16, className = '' }: { name: keyof typeof P | string; size?: number; className?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d={P[name] ?? ''} />
     </svg>
   )
 }
 
-export function Mark({ size = 22 }: { size?: number }) {
+export function Mark({ size = 22, color = '#34302D' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-      <path d="M12 46 L32 12 L52 46 Z" fill="none" stroke="#E8AB40" strokeWidth="4.5" strokeLinejoin="round" />
-      <circle cx="32" cy="37" r="5.5" fill="#E8AB40" />
+      <path d="M16 54V30a16 16 0 0 1 32 0v24" fill="none" stroke={color} strokeWidth="3.5" />
+      <circle cx="32" cy="40" r="3.5" fill={color} />
     </svg>
   )
+}
+
+/** lowercase editorial wordmark */
+export function Wordmark({ className = '' }: { className?: string }) {
+  return <span className={`text-[19px] font-medium tracking-[-0.01em] ${className}`}>boliverse</span>
 }

@@ -34,7 +34,7 @@ export const SHARED = {
   blue: std('#3f67a8'),
   rope: std('#6b5338'),
   waterDark: std('#16343c', { roughness: 0.2 }),
-  ring: new THREE.MeshBasicMaterial({ color: '#E8AB40', transparent: true, opacity: 0.85 }),
+  ring: new THREE.MeshBasicMaterial({ color: '#F6F1EA', transparent: true, opacity: 0.9 }),
 }
 
 export const COLOR_HEX: Record<Color, string> = {
@@ -539,7 +539,12 @@ export function WorldEntities({ entities, selectedId, route }: { entities: Entit
   const select = useStudio((s) => s.select)
   const trees = useMemo(() => entities.filter((e) => e.type === 'tree'), [entities])
   const rocks = useMemo(() => entities.filter((e) => e.type === 'rock'), [entities])
+  // stagger the spawn animation only within a batch of newly created objects (a whole village),
+  // so a single later edit appears immediately instead of waiting behind everything already built
+  const seen = useRef(new Set<string>())
+  useEffect(() => { for (const e of entities) seen.current.add(e.id) }, [entities])
   let n = 0
+  const delayFor = (id: string) => (seen.current.has(id) ? 0 : Math.min(1.2, n++ * 0.03))
   return (
     <group>
       {entities.map((e) => {
@@ -554,7 +559,7 @@ export function WorldEntities({ entities, selectedId, route }: { entities: Entit
             </RigidBody>
           ) : <Debris key={`${e.id}-${e.gen}`} e={e} />
         }
-        return <Structure key={e.id} e={e} selected={selectedId === e.id} onSelect={select} delay={Math.min(1.2, n++ * 0.03)} />
+        return <Structure key={e.id} e={e} selected={selectedId === e.id} onSelect={select} delay={delayFor(e.id)} />
       })}
       <Trees trees={trees} onSelect={select} />
       <Rocks rocks={rocks} onSelect={select} />

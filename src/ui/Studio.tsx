@@ -4,7 +4,7 @@ import { computeRoute } from '../engine/traversal'
 import { useStudio } from '../store'
 import { getHealth } from '../voice/api'
 import { toggleMic } from '../voice/controller'
-import { Icon, Mark } from './Icon'
+import { Icon, Mark, Wordmark } from './Icon'
 import { VoicePanel } from './VoicePanel'
 import { Inspector } from './Inspector'
 import { Timeline } from './FilmBar'
@@ -17,6 +17,7 @@ export default function Studio() {
   const paused = useStudio((s) => s.paused)
   const mode = useStudio((s) => s.mode)
   const selectedId = useStudio((s) => s.selectedId)
+  const phase = useStudio((s) => s.phase)
   const [left, setLeft] = useState(isWide())
   const [right, setRight] = useState(typeof innerWidth !== 'undefined' && innerWidth >= 1600)
 
@@ -37,40 +38,41 @@ export default function Studio() {
     mq.addEventListener('change', sync)
     return () => mq.removeEventListener('change', sync)
   }, [])
-  // selecting something on a wide screen reveals the inspector
   useEffect(() => { if (selectedId && isWide()) setRight(true) }, [selectedId])
 
   return (
-    <div className="grid h-[100dvh] grid-rows-[44px_1fr] overflow-hidden bg-[var(--bg)]">
-      <Toolbar left={left} right={right} onLeft={() => setLeft(!left)} onRight={() => setRight(!right)} />
+    <div className="grid h-[100dvh] grid-cols-[minmax(0,1fr)] grid-rows-[56px_1fr] overflow-hidden bg-[var(--bg)]">
+      <Header left={left} right={right} onLeft={() => setLeft(!left)} onRight={() => setRight(!right)} />
       <div className="relative flex min-h-0">
-        <aside aria-label="Voice Studio" className={`panel z-20 flex shrink-0 flex-col overflow-hidden border-r border-[var(--line)] max-lg:absolute max-lg:inset-y-0 max-lg:left-0 max-lg:w-[min(340px,88vw)] max-lg:shadow-2xl ${left ? 'lg:w-[312px]' : 'lg:w-0 lg:border-r-0 max-lg:-translate-x-full'}`}>
-          <div className="flex min-h-0 w-[312px] flex-1 flex-col max-lg:w-full"><VoicePanel onClose={() => setLeft(false)} /></div>
+        <aside aria-label="Voice Studio" className={`panel z-20 flex shrink-0 flex-col overflow-hidden border-r border-[var(--line)] max-lg:absolute max-lg:inset-y-0 max-lg:left-0 max-lg:w-[min(360px,90vw)] max-lg:shadow-[0_30px_80px_-20px_rgba(46,42,39,0.35)] ${left ? 'lg:w-[340px]' : 'lg:w-0 lg:border-r-0 max-lg:-translate-x-full'}`}>
+          <div className="flex min-h-0 w-[340px] flex-1 flex-col max-lg:w-full"><VoicePanel onClose={() => setLeft(false)} /></div>
         </aside>
 
-        <main className="relative flex min-w-0 flex-1 flex-col">
-          <div className="relative min-h-0 flex-1">
+        <main className="relative flex min-w-0 flex-1 flex-col px-3 pb-3 lg:px-4 lg:pb-4">
+          {/* the viewport sits in a beige gallery frame, like a window onto the world */}
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-[10px] bg-[#cfc6bc] shadow-[0_1px_0_rgba(255,255,255,0.5),0_20px_40px_-28px_rgba(46,42,39,0.45)]">
             <WorldView world={world} quality={quality} paused={paused} />
             <ViewportOverlay />
-            <button onClick={() => void toggleMic()} aria-label="Speak a command" className="absolute bottom-4 left-1/2 z-10 grid h-14 w-14 -translate-x-1/2 place-items-center rounded-full bg-[var(--accent)] text-[#18120a] shadow-[0_10px_30px_-8px_rgba(217,167,90,0.6)] lg:hidden">
-              <Icon name="mic" size={22} />
+            <button onClick={() => void toggleMic()} aria-label="Speak a command"
+              className={`absolute bottom-5 left-1/2 z-10 grid h-14 w-14 -translate-x-1/2 place-items-center rounded-full transition lg:hidden ${phase === 'listening' ? 'bg-[var(--ink)] text-[#f4efe9]' : 'bg-[var(--panel)] text-[var(--ink)] shadow-[0_10px_30px_-10px_rgba(46,42,39,0.5)]'}`}>
+              <Icon name={phase === 'listening' ? 'stop' : 'mic'} size={20} />
             </button>
           </div>
-          <BottomBar onTimeline={() => useStudio.getState().set({ mode: mode === 'film' ? 'build' : 'film' })} />
-          <div className={`overflow-hidden border-t border-[var(--line)] bg-[var(--panel)] transition-[max-height] duration-300 ${mode === 'film' ? 'max-h-[260px]' : 'max-h-0 border-t-0'}`}>
+          <BottomBar />
+          <div className={`overflow-hidden rounded-[10px] bg-[var(--panel)] transition-[max-height,margin] duration-500 ${mode === 'film' ? 'max-h-[280px]' : 'max-h-0'}`}>
             <Timeline />
           </div>
         </main>
 
-        <aside aria-label="Inspector" className={`panel z-20 flex shrink-0 flex-col overflow-hidden border-l border-[var(--line)] max-lg:absolute max-lg:inset-y-0 max-lg:right-0 max-lg:w-[min(320px,88vw)] max-lg:shadow-2xl ${right ? 'lg:w-[288px]' : 'lg:w-0 lg:border-l-0 max-lg:translate-x-full'}`}>
-          <div className="flex min-h-0 w-[288px] flex-1 flex-col max-lg:w-full"><Inspector onClose={() => setRight(false)} /></div>
+        <aside aria-label="Inspector" className={`panel z-20 flex shrink-0 flex-col overflow-hidden border-l border-[var(--line)] max-lg:absolute max-lg:inset-y-0 max-lg:right-0 max-lg:w-[min(340px,90vw)] max-lg:shadow-[0_30px_80px_-20px_rgba(46,42,39,0.35)] ${right ? 'lg:w-[300px]' : 'lg:w-0 lg:border-l-0 max-lg:translate-x-full'}`}>
+          <div className="flex min-h-0 w-[300px] flex-1 flex-col max-lg:w-full"><Inspector onClose={() => setRight(false)} /></div>
         </aside>
       </div>
     </div>
   )
 }
 
-function Toolbar({ left, right, onLeft, onRight }: { left: boolean; right: boolean; onLeft: () => void; onRight: () => void }) {
+function Header({ left, right, onLeft, onRight }: { left: boolean; right: boolean; onLeft: () => void; onRight: () => void }) {
   const mode = useStudio((s) => s.mode)
   const set = useStudio((s) => s.set)
   const undo = useStudio((s) => s.undo)
@@ -90,38 +92,37 @@ function Toolbar({ left, right, onLeft, onRight }: { left: boolean; right: boole
     setMenu(false)
   }
   return (
-    <header className="relative z-30 flex items-center gap-1 border-b border-[var(--line)] bg-[var(--bg)] px-2">
+    <header className="relative z-30 flex min-w-0 items-center gap-1 px-2 sm:gap-2 sm:px-3 lg:px-5">
       <button className="tool" aria-pressed={left} onClick={onLeft} aria-label="Toggle Voice Studio" title="Voice Studio"><Icon name="mic" /></button>
-      <a href="#/" className="ml-1 flex items-center gap-2 pr-3" aria-label="BoliVerse home"><Mark size={18} /><span className="text-[13px] font-semibold tracking-tight">BoliVerse</span></a>
-      <span className="hidden h-4 w-px bg-[var(--line-2)] sm:block" />
-      <span className="hidden px-3 text-[12px] text-[var(--muted)] sm:block">{template === 'village' ? 'River Village' : 'Untitled valley'}</span>
+      <a href="#/" className="ml-1 flex items-center gap-2.5" aria-label="BoliVerse home"><Mark size={20} /><Wordmark className="max-sm:hidden" /></a>
+      <span className="mx-3 hidden h-4 w-px bg-[var(--line-2)] md:block" />
+      <span className="hidden text-[13px] text-[var(--muted)] md:block">{template === 'village' ? 'River Village' : 'Untitled valley'}</span>
 
-      <div className="absolute left-1/2 -translate-x-1/2 max-sm:static max-sm:mx-auto max-sm:translate-x-0">
-        <div className="seg" role="tablist" aria-label="Mode">
-          {(['build', 'simulate', 'film'] as const).map((m) => (
-            <button key={m} role="tab" aria-selected={mode === m} className="capitalize" onClick={() => set({ mode: m, ...(m === 'simulate' ? { paused: false } : {}) })}>{m}</button>
-          ))}
-        </div>
-      </div>
+      <nav className="tabs absolute left-1/2 -translate-x-1/2 max-sm:static max-sm:mx-auto max-sm:translate-x-0 max-sm:gap-3.5" role="tablist" aria-label="Mode">
+        {(['build', 'simulate', 'film'] as const).map((m) => (
+          <button key={m} role="tab" aria-selected={mode === m} className="capitalize" onClick={() => set({ mode: m, ...(m === 'simulate' ? { paused: false } : {}) })}>{m}</button>
+        ))}
+      </nav>
 
       <div className="ml-auto flex items-center gap-0.5">
         <button className="tool" onClick={() => undo()} disabled={!canUndo} title="Undo (Ctrl Z)" aria-label="Undo"><Icon name="undo" /></button>
-        <button className="tool" onClick={() => redo()} disabled={!canRedo} title="Redo (Ctrl Shift Z)" aria-label="Redo"><Icon name="redo" /></button>
-        <span className="mx-1 hidden h-4 w-px bg-[var(--line-2)] sm:block" />
-        <button className="tool max-sm:hidden" onClick={() => void save()} title="Save to this browser (IndexedDB)">Save</button>
+        <button className="tool max-sm:hidden" onClick={() => redo()} disabled={!canRedo} title="Redo (Ctrl Shift Z)" aria-label="Redo"><Icon name="redo" /></button>
+        <span className="mx-2 hidden h-4 w-px bg-[var(--line-2)] sm:block" />
+        <button className="tool max-sm:hidden" onClick={() => void save()} title="Save to this browser">Save</button>
         <div className="relative">
-          <button className="tool" onClick={() => setMenu(!menu)} aria-expanded={menu} title="Export">Export</button>
+          <button className="tool" onClick={() => setMenu(!menu)} aria-expanded={menu}>Export</button>
           {menu && (
-            <div className="absolute right-0 top-9 w-52 rounded-lg bg-[var(--raised)] p-1 shadow-2xl ring-1 ring-[var(--line-2)]" onMouseLeave={() => setMenu(false)}>
+            <div className="absolute right-0 top-10 w-56 rounded-[4px] bg-[var(--raised)] py-1.5 shadow-[0_20px_50px_-15px_rgba(46,42,39,0.35)] ring-1 ring-[var(--line)]" onMouseLeave={() => setMenu(false)}>
               <MenuItem onClick={exportJson}>Scene as JSON</MenuItem>
-              <MenuItem onClick={() => { fileRef.current?.click(); setMenu(false) }}>Import scene JSON…</MenuItem>
+              <MenuItem onClick={() => { fileRef.current?.click(); setMenu(false) }}>Import scene…</MenuItem>
               <MenuItem onClick={() => { void useStudio.getState().load(); setMenu(false) }}>Open last save</MenuItem>
+              <div className="my-1.5 h-px bg-[var(--line)]" />
               <MenuItem onClick={() => { set({ mode: 'film' }); setMenu(false) }}>Cinematic video…</MenuItem>
             </div>
           )}
           <input ref={fileRef} type="file" accept="application/json" hidden onChange={(e) => e.target.files?.[0]?.text().then((t) => useStudio.getState().importJson(t))} />
         </div>
-        <span className="mx-1 hidden h-4 w-px bg-[var(--line-2)] sm:block" />
+        <span className="mx-2 hidden h-4 w-px bg-[var(--line-2)] sm:block" />
         <button className="tool" aria-pressed={right} onClick={onRight} aria-label="Toggle Inspector" title="Inspector"><Icon name="layers" /></button>
       </div>
     </header>
@@ -129,7 +130,7 @@ function Toolbar({ left, right, onLeft, onRight }: { left: boolean; right: boole
 }
 
 const MenuItem = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
-  <button onClick={onClick} className="block w-full rounded-md px-2.5 py-1.5 text-left text-[12px] text-[var(--text)] hover:bg-white/5">{children}</button>
+  <button onClick={onClick} className="block w-full px-4 py-2 text-left text-[13px] text-[var(--text)] transition hover:bg-[rgba(58,52,48,0.05)]">{children}</button>
 )
 
 function ViewportOverlay() {
@@ -144,33 +145,33 @@ function ViewportOverlay() {
   return (
     <>
       {!world.entities.length && (
-        <div className="pointer-events-none absolute inset-0 grid place-items-center bg-[radial-gradient(closest-side,rgba(11,13,16,0.72),rgba(11,13,16,0))] p-6 text-center">
-          <div className="fadein max-w-sm [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
-            <p className="eyebrow mb-3">Empty valley</p>
-            <p className="font-display text-[34px] leading-[1.05] text-[var(--text)]">Say <em className="text-[var(--accent-2)]">“Ek sundar gaon banao”</em></p>
-            <p className="mt-3 text-[12px] text-white/75">Press the mic or <span className="kbd">Space</span>. Prefer typing? Use the field in Voice Studio.</p>
+        <div className="pointer-events-none absolute inset-0 grid place-items-center p-6">
+          <div className="fadein max-w-sm bg-[var(--panel)]/92 px-10 py-9 text-center shadow-[0_30px_60px_-30px_rgba(46,42,39,0.45)] backdrop-blur-sm">
+            <p className="eyebrow">An empty valley</p>
+            <p className="mt-4 text-[30px] font-light leading-[1.15] tracking-[-0.015em]">Say “Ek sundar<br />gaon banao”</p>
+            <p className="mt-4 text-[13px] leading-relaxed text-[var(--muted)]">Press the microphone or <span className="kbd">Space</span>, or type a command in Voice Studio.</p>
           </div>
         </div>
       )}
-      <div className="tnum pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/70 [text-shadow:0_1px_2px_rgba(0,0,0,0.6)] max-lg:bottom-20">
+      <div className="tnum pointer-events-none absolute bottom-4 left-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] tracking-[0.02em] text-[#f6f1ea]/90 [text-shadow:0_1px_3px_rgba(30,26,23,0.55)] max-lg:bottom-24">
         <span>{world.entities.length} objects</span>
         <span>{fps} fps</span>
         <span>Physics {paused ? 'paused' : 'live'}</span>
         {hasRiver && (
           <span className="flex items-center gap-1.5">
-            <span className={`h-1.5 w-1.5 rounded-full ${route.ok ? 'bg-[var(--ok)]' : 'animate-pulse bg-[var(--bad)]'}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${route.ok ? 'bg-[#cfe0cf]' : 'animate-pulse bg-[#f0a796]'}`} />
             {route.ok ? `Route open · ${route.via}` : 'Route blocked · no crossing'}
           </span>
         )}
       </div>
       {rec.state === 'recording' && (
-        <div className="absolute inset-0 z-20 grid place-items-center bg-[#0b0d10]/70 backdrop-blur-[2px]">
-          <div className="w-[min(320px,86%)] text-center">
-            <p className="eyebrow mb-3 !text-[var(--accent)]">Rendering live scene</p>
-            <p className="tnum text-[44px] font-light leading-none">{Math.round(rec.progress * 100)}<span className="text-[var(--muted)]">%</span></p>
-            <div className="mt-5 h-px overflow-hidden bg-white/10"><div className="h-full bg-[var(--accent)] transition-[width] duration-200" style={{ width: `${rec.progress * 100}%` }} /></div>
-            <p className="mt-4 text-[11px] text-[var(--muted)]">Frame-exact capture of this 3D world. Nothing is pre-rendered.</p>
-            <button className="btn-line mt-5" onClick={() => useStudio.getState().set({ recording: { ...rec, state: 'idle', message: 'Cancelled' } })}>Cancel</button>
+        <div className="absolute inset-0 z-20 grid place-items-center bg-[rgba(231,224,216,0.82)] backdrop-blur-[3px]">
+          <div className="w-[min(340px,86%)] text-center">
+            <p className="eyebrow mb-4">Rendering the live scene</p>
+            <p className="tnum text-[56px] font-light leading-none">{Math.round(rec.progress * 100)}<span className="text-[var(--faint)]">%</span></p>
+            <div className="mt-6 h-px overflow-hidden bg-[var(--line-2)]"><div className="h-full bg-[var(--ink)] transition-[width] duration-200" style={{ width: `${rec.progress * 100}%` }} /></div>
+            <p className="mt-5 text-[12.5px] text-[var(--muted)]">Frame-exact capture of this 3D world. Nothing is pre-rendered.</p>
+            <button className="btn-line mt-6" onClick={() => useStudio.getState().set({ recording: { ...rec, state: 'idle', message: 'Cancelled' } })}>Cancel</button>
           </div>
         </div>
       )}
@@ -178,7 +179,7 @@ function ViewportOverlay() {
   )
 }
 
-function BottomBar({ onTimeline }: { onTimeline: () => void }) {
+function BottomBar() {
   const run = useStudio((s) => s.run)
   const paused = useStudio((s) => s.paused)
   const mode = useStudio((s) => s.mode)
@@ -195,19 +196,20 @@ function BottomBar({ onTimeline }: { onTimeline: () => void }) {
       setTimeout(() => URL.revokeObjectURL(a.href), 1000)
     })
   }
-  const Sep = () => <span className="mx-1.5 h-4 w-px shrink-0 bg-[var(--line-2)]" />
+  const Sep = () => <span className="mx-3 h-4 w-px shrink-0 bg-[var(--line-2)]" />
   return (
-    <div className="scroll-thin flex h-10 shrink-0 items-center overflow-x-auto border-t border-[var(--line)] bg-[var(--bg)] px-2">
-      <span className="eyebrow mr-1 pl-1 max-sm:hidden">Camera</span>
-      {(['overview', 'top', 'low', 'focus'] as const).map((v) => <button key={v} className="tool capitalize" onClick={() => view(v)}>{v}</button>)}
+    <div className="scroll-thin flex h-12 shrink-0 items-center overflow-x-auto px-1">
+      <span className="eyebrow mr-2 max-md:hidden">Camera</span>
+      {(['overview', 'top', 'low', 'focus'] as const).map((v) => <button key={v} className="tool shrink-0 capitalize" onClick={() => view(v)}>{v}</button>)}
       <Sep />
-      <span className="eyebrow mr-1 max-sm:hidden">Physics</span>
-      <button className="tool" onClick={() => set({ paused: !paused })} aria-pressed={!paused}>{paused ? <><Icon name="play" size={12} />Resume</> : <><Icon name="stop" size={12} />Pause</>}</button>
-      <button className="tool" onClick={() => void run('push the rocks', 'text', {}, [{ action: 'APPLY_FORCE', target: { type: 'rock', ref: 'all' }, strength: 6 }])}>Impulse</button>
+      <span className="eyebrow mr-2 max-md:hidden">Physics</span>
+      <button className="tool shrink-0" onClick={() => set({ paused: !paused })}>{paused ? 'Resume' : 'Pause'}</button>
+      <button className="tool shrink-0" onClick={() => void run('push the rocks', 'text', {}, [{ action: 'APPLY_FORCE', target: { type: 'rock', ref: 'all' }, strength: 6 }])}>Impulse</button>
       <Sep />
-      <button className="tool" aria-pressed={mode === 'film'} onClick={onTimeline}><Icon name="film" size={14} />Timeline</button>
-      <button className="tool" onClick={screenshot}>Screenshot</button>
-      <button className="tool !text-[var(--accent)]" onClick={() => set({ mode: 'film' })}><Icon name="rec" size={12} />Record</button>
+      <button className="tool shrink-0" aria-pressed={mode === 'film'} onClick={() => set({ mode: mode === 'film' ? 'build' : 'film' })}><Icon name="film" size={15} />Timeline</button>
+      <button className="tool shrink-0" onClick={screenshot}>Screenshot</button>
+      <span className="ml-auto pl-3" />
+      <button className="btn-ink shrink-0 !h-8 !px-4" onClick={() => set({ mode: 'film' })}><span className="h-1.5 w-1.5 rounded-full bg-[#e07a63]" />Record</button>
     </div>
   )
 }
