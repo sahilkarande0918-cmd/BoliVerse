@@ -9,6 +9,8 @@ import { DECK_Y, type Entity, rng, riverSlope, riverX, terrainHeight, WATER_Y } 
 import type { Route } from './traversal'
 import { footprint } from './spatial'
 import { TEX } from './textures'
+import { InteriorItem, Mansion, Rubble } from './Mansion'
+import { INTERIOR_TYPES } from '../compiler/schema'
 
 // ---------- shared materials (one instance each → cheap, and night glow is one uniform update) ----------
 const std = (color: string, o: THREE.MeshStandardMaterialParameters = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...o })
@@ -62,7 +64,7 @@ export function surface(material?: Material, color?: Color, fallback = '#d9a35b'
 }
 
 // ---------- shared geometry ----------
-const BOX = new THREE.BoxGeometry(1, 1, 1)
+export const BOX = new THREE.BoxGeometry(1, 1, 1)
 const CYL = new THREE.CylinderGeometry(1, 1, 1, 12)
 const GABLE = (() => {
   const s = new THREE.Shape([new THREE.Vector2(-2.5, 0), new THREE.Vector2(2.5, 0), new THREE.Vector2(0, 1.6)])
@@ -73,7 +75,7 @@ const GABLE = (() => {
 const HIP = new THREE.ConeGeometry(4.3, 2.3, 4, 1)
 HIP.rotateY(Math.PI / 4)
 
-function B({ p, s, m, r, cast = true }: { p: [number, number, number]; s: [number, number, number]; m: THREE.Material; r?: [number, number, number]; cast?: boolean }) {
+export function B({ p, s, m, r, cast = true }: { p: [number, number, number]; s: [number, number, number]; m: THREE.Material; r?: [number, number, number]; cast?: boolean }) {
   return <mesh geometry={BOX} position={p} scale={s} rotation={r} material={m} castShadow={cast} receiveShadow />
 }
 
@@ -500,12 +502,21 @@ function Cart({ route }: { route: Route }) {
 
 // ---------- entity dispatch ----------
 const Structure = memo(function Structure({ e, selected, onSelect, delay }: { e: Entity; selected: boolean; onSelect: (id: string) => void; delay: number }) {
-  const inner = e.type === 'house' ? <House e={e} /> : e.type === 'temple' ? <Temple e={e} /> : e.type === 'school' ? <School e={e} /> : e.type === 'well' ? <Well e={e} /> : e.type === 'lamp' ? <Lamp /> : <B p={[0, 1, 0]} s={[2, 2, 2]} m={surface(e.material, e.color)} />
+  if (e.state === 'destroyed') return <Rubble key={`${e.id}-${e.gen}`} e={e} />
+  if (INTERIOR_TYPES.includes(e.type)) {
+    return (
+      <group position={e.pos} rotation={[0, e.rotY, 0]}>
+        <group scale={e.scale} onClick={(ev) => { ev.stopPropagation(); onSelect(e.id) }}><Pop delay={delay}><InteriorItem e={e} /></Pop></group>
+        {selected && <SelectRing r={1.6 * e.scale} />}
+      </group>
+    )
+  }
+  const inner = e.type === 'mansion' ? <Mansion e={e} /> : e.type === 'house' ? <House e={e} /> : e.type === 'temple' ? <Temple e={e} /> : e.type === 'school' ? <School e={e} /> : e.type === 'well' ? <Well e={e} /> : e.type === 'lamp' ? <Lamp /> : <B p={[0, 1, 0]} s={[2, 2, 2]} m={surface(e.material, e.color)} />
   const fp = footprint(e.type)
-  const half: [number, number, number] = e.type === 'school' ? [6.3, 2, 2.8] : e.type === 'temple' ? [4.5, 3, 4.5] : e.type === 'lamp' ? [0.2, 2, 0.2] : [fp / 2.3, 1.8, fp / 2.3]
+  const half: [number, number, number] = e.type === 'mansion' ? [12, 1.6, 9] : e.type === 'school' ? [6.3, 2, 2.8] : e.type === 'temple' ? [4.5, 3, 4.5] : e.type === 'lamp' ? [0.2, 2, 0.2] : [fp / 2.3, 1.8, fp / 2.3]
   return (
     <RigidBody type="fixed" colliders={false} position={e.pos} rotation={[0, e.rotY, 0]}>
-      <CuboidCollider args={half} position={[0, half[1], 0]} />
+      <CuboidCollider args={half} position={e.type === 'mansion' ? [0, -1, 1] : [0, half[1], 0]} />
       <group scale={e.scale} onClick={(ev) => { ev.stopPropagation(); onSelect(e.id) }}>
         <Pop delay={delay}>{inner}</Pop>
       </group>

@@ -5,7 +5,7 @@ import { riverX } from '../engine/world'
 import { useStudio } from '../store'
 import { Icon } from './Icon'
 
-const STRUCT = ['bridge', 'house', 'temple', 'school', 'well']
+const STRUCT = ['bridge', 'house', 'temple', 'school', 'well', 'mansion']
 
 function Num({ label, value, onCommit, step = 0.5, suffix }: { label: string; value: number; onCommit: (v: number) => void; step?: number; suffix?: string }) {
   const [v, setV] = useState(value.toFixed(1))

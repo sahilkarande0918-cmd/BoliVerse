@@ -15,12 +15,21 @@ const L: Record<string, string> = {
   'OBJ:school': 'school vidyalaya shala shaala स्कूल शाळा शाला विद्यालय',
   'OBJ:lamp': 'lamp streetlight street_light lantern diya deepak batti लैंप दिया दिवा दीपक',
   'OBJ:cart': 'cart bullock_cart bailgadi bailgaadi gaadi gadi vehicle car truck बैलगाड़ी बैलगाडी गाड़ी गाडी',
+  'OBJ:mansion': 'mansion villa bungalow haveli mahal palace bangla banglow luxury_house dream_house बंगला बंगले बंगल्यात बंगल्यामध्ये बंगल्याच्या हवेली महल बंगलो मैंशन मेंशन',
+  'OBJ:sofa': 'sofa couch sofa_set सोफा सोफ़ा',
+  'OBJ:bed': 'bed palang bistar पलंग बिस्तर बेड',
+  'OBJ:table': 'table dining_table coffee_table mez मेज टेबल',
+  'OBJ:chandelier': 'chandelier jhoomar jhumar jhumbar झूमर झुंबर',
+  'OBJ:plant': 'plant plants indoor_plant gamla paudha paudhe kundi पौधा पौधे गमला कुंडी',
+  'OBJ:rug': 'rug carpet kaleen galicha dari कालीन गालिचा दरी',
+  'X:pool': 'swimming_pool pool_ke_saath with_pool स्विमिंग_पूल',
+  'INTERIOR': 'interior walkthrough room rooms kamra kamre कमरा खोली',
   'SCENE:village': 'village gaon gaanv gaav gav gram basti town गाँव गांव गाव ग्राम बस्ती',
   'SCENE:forest': 'forest jungle jangal जंगल वन',
   'SCENE:blank': 'reset start_over new_scene clear_everything shuru_se naya_scene sab_saaf सब_साफ',
 
   // ---- verbs ----
-  'V:create': 'make build create add construct place put plant generate spawn banao banaao bana banado banana banaye banaiye bnao banaa daalo dalo lagao rakho ugao ho hona chahiye bandho bandha banva banwa tayar taiyar lava ugva बनाओ बनाइए बना बनाना बनाएं डालो लगाओ रखो उगाओ हो होना चाहिए बांधो बांधा बनवा तयार लावा',
+  'V:create': 'make build create add construct place put plant generate spawn banao banaao bana banado banana banaye banaiye bnao banaa daalo dalo lagao rakho ugao ho hona chahiye bandho bandha banva banwa tayar taiyar lava ugva बनाओ बनाइए बना बनाना बनाएं डालो लगाओ रखो उगाओ हो होना चाहिए बांधो बांधा बनवा तयार लावा ठेवा theva rakh',
   'V:destroy': 'तो_दो to_do_do destroy break smash blow_up collapse demolish wreck tod todo todh tor toro todo_do tod_do tod_de gira girao gira_do uda_do ura_do nasht paada padun todun तोड़ो तोड़ तोडो तोड गिराओ गिरा नष्ट उड़ा उड़ाओ तोडा तोडून पाडा ध्वस्त',
   'V:delete': 'delete remove erase hatao hata hata_do nikalo nikaal mitao kadha kaadh kaadha हटाओ हटा निकालो मिटाओ काढा काढ',
   'V:repair': 'repair fix rebuild restore reconstruct theek thik sudhaar sudharo jod jodo ठीक सुधारो जोड़ो दुरुस्त',
@@ -85,6 +94,7 @@ const L: Record<string, string> = {
   'MAT:mud': 'mud mitti kaccha मिट्टी माती',
   'MAT:glass': 'glass kaanch kanch काँच कांच',
   'MAT:gold': 'gold golden sona sone सोना सोने',
+  'REL:inside': 'inside andar ke_andar ki_andar aat chya_aat के_अंदर अंदर च्या_आत आत',
   'REL:near': 'near beside next_to nearby paas pass ke_paas kareeb nazdeek jawal javal bagal पास नज़दीक नजदीक जवळ बगल करीब',
   'REL:across': 'across par paar ke_paar aar_paar palikade ke_upar ke_uper over_the के_ऊपर के_उपर पार पलीकडे',
   'REL:between': 'between ke_beech ke_bich के_बीच च्या_मध्ये',
@@ -137,6 +147,6 @@ export const MAX_PHRASE = 3
 /** Function words we tolerate without flagging the utterance as poorly understood. */
 export const STOPWORDS = new Set(
   ('a an the of to in on at with and or for from by is are be please now then also just ab abhi ko ka ki ke se mein me mai main par pe hai hain kar karo kare karna kariye kardo kar_do de do dena diya hua hui ' +
-   'beautiful sundar nice big small indian bharatiya ek_aur aur ani aani ने को का की के से में पर है हैं करो कर करें करा करना दो दे दीजिए और आणि अब एक_और ला ची चा चे च्या मध्ये madhe beech bich बीच wala wali wale वाला वाली वाले jagah जगह jaga place one ' +
+   'beautiful sundar nice big small indian luxury luxurious aalishan alishan shaandar shandar modern premium आलीशान शानदार आलिशान bharatiya ek_aur aur ani aani ने को का की के से में पर है हैं करो कर करें करा करना दो दे दीजिए और आणि अब एक_और ला ची चा चे च्या मध्ये madhe beech bich बीच wala wali wale वाला वाली वाले jagah जगह jaga place one ' +
    'which let lets make_it let\'s get give ok okay hey bhai yaar its it\'s there here yahan wahan यहाँ वहाँ called named some much more le jao jao chalo ले जाओ जा चलो banaye ka_ek wali').split(' '),
 )

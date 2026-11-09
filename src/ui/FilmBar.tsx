@@ -11,6 +11,8 @@ const SHOTS: [CameraPreset, string, string][] = [
   ['destruction', 'Destruction', 'Slow push-in on the crossing'],
   ['sunset_panorama', 'Panorama', 'Wide lateral pan from the west bank'],
   ['orbit', 'Orbit', '360° around the subject'],
+  ['mansion_reveal', 'Mansion reveal', 'Sweeping arc onto the glass façade'],
+  ['interior', 'Interior walkthrough', 'Eye-level glide through the furnished rooms'],
 ]
 
 // Film mode: a shot track over a time ruler, plus capture/export.

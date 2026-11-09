@@ -21,11 +21,22 @@ const LANG_NAME: Record<string, string> = { 'hi-IN': 'Hindi', 'mr-IN': 'Marathi'
 const PHASE: Record<string, string> = { idle: 'Ready', listening: 'Listening', transcribing: 'Transcribing · Gnani Prisma', interpreting: 'Understanding', applying: 'Building world', done: 'Done', error: 'Needs attention' }
 
 /** Next sensible things to say, given the world as it is now. */
+export const MANSION_STEPS = [
+  'Ek luxury mansion banao, swimming pool ke saath',
+  'Mansion ke andar sofa, kaleen aur jhoomar lagao',
+  'Dining table aur bed bhi lagao, aur raat kar do',
+  'Mansion ke andar camera le jao, 12 second ka video banao',
+]
 function suggest(w: World): string[] {
   const bridges = w.entities.filter((e) => e.type === 'bridge')
+  const mansion = w.entities.some((e) => e.type === 'mansion')
+  if (mansion) {
+    const furnished = w.entities.filter((e) => ['sofa', 'bed', 'table', 'chandelier', 'rug', 'plant'].includes(e.type)).length
+    return furnished < 3 ? [MANSION_STEPS[1], MANSION_STEPS[2], 'Make a cinematic shot of the mansion'] : [MANSION_STEPS[3], 'बंगले में पौधे लगाओ', 'Make a cinematic shot of the mansion']
+  }
   if (!w.entities.length) return [DEMO_STEPS[0].text, 'एक गाँव बनाओ', 'Make a wooden bridge across the river']
   if (bridges.some((b) => b.state === 'destroyed') && !bridges.some((b) => b.state === 'intact')) return [DEMO_STEPS[3].text, 'Rebuild the bridge in steel', 'Undo']
-  if (bridges.length >= 2) return [DEMO_STEPS[4].text, 'raat kar do aur barish karo', 'पाच झाडे लावा']
+  if (bridges.length >= 2) return [DEMO_STEPS[4].text, MANSION_STEPS[0], 'raat kar do aur barish karo']
   if (bridges.length === 1) return [w.env.time === 'sunset' ? DEMO_STEPS[2].text : DEMO_STEPS[1].text, 'मंदिर के पास तीन घर बनाओ', 'Paint it red']
   return ['Make a wooden bridge across the river', 'barish karo', 'Orbit the village with the camera']
 }

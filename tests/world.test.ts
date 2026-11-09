@@ -69,6 +69,29 @@ describe('signature demo: transcript → operations → world → causal graph',
   })
 })
 
+describe('mansion interior design', () => {
+  it('furnishes inside the mansion footprint without stacking items', () => {
+    let w = say(emptyWorld(9), 'Ek luxury mansion banao').world
+    const m = w.entities.find((e) => e.type === 'mansion')!
+    expect(m).toBeTruthy()
+    w = say(w, 'Mansion ke andar sofa aur chandelier lagao').world
+    w = say(w, 'Add a dining table inside the mansion').world
+    w = say(w, 'mansion ke andar do sofa lagao').world
+    const items = w.entities.filter((e) => ['sofa', 'chandelier', 'table'].includes(e.type))
+    expect(items.length).toBe(5)
+    for (const it of items) expect(Math.hypot(it.pos[0] - m.pos[0], it.pos[2] - m.pos[2])).toBeLessThan(12)
+    const sofas = items.filter((e) => e.type === 'sofa')
+    expect(Math.hypot(sofas[0].pos[0] - sofas[1].pos[0], sofas[0].pos[2] - sofas[1].pos[2])).toBeGreaterThan(1)
+    expect(items.find((e) => e.type === 'chandelier')!.pos[1]).toBeGreaterThan(m.pos[1] + 3)
+  })
+  it('auto-builds a mansion when furnishing an empty valley, and destroys it into rubble state', () => {
+    let w = say(emptyWorld(4), 'mansion ke andar bed lagao').world
+    expect(w.entities.some((e) => e.type === 'mansion')).toBe(true)
+    w = say(w, 'mansion tod do').world
+    expect(w.entities.find((e) => e.type === 'mansion')!.state).toBe('destroyed')
+  })
+})
+
 describe('traversal graph', () => {
   it('BFS finds bank-to-bank path only through intact bridges', () => {
     expect(findPath([['bank_w', 'b1'], ['b1', 'bank_e']], 'bank_w', 'bank_e')).toEqual(['bank_w', 'b1', 'bank_e'])

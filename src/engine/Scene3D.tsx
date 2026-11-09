@@ -13,6 +13,7 @@ import { WorldEntities } from './Entities'
 import { computeRoute } from './traversal'
 import { buildShot, poseAt, villageCentre, type ShotPath } from './shots'
 import { riverX, type World } from './world'
+import { footprint } from './spatial'
 import { encodeFrames, pickExport, recordRealtime } from '../video/exporter'
 
 // ---------- camera: orbit controls + spoken view changes + shot preview ----------
@@ -29,11 +30,12 @@ function CameraDirector({ world }: { world: World }) {
     const C = villageCentre(world)
     const e = world.entities.find((x) => x.id === cmd.targetId) ?? world.entities.find((x) => x.id === world.recent.at(-1))
     const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z)
+    const k = e ? Math.max(0.6, footprint(e.type) / 7) * e.scale : 1 // frame the object by its size
     const poses: Record<string, { p: THREE.Vector3; t: THREE.Vector3 }> = {
       overview: { p: C.clone().add(V(62, 48, 74)), t: C.clone() },
       top: { p: C.clone().add(V(0, 150, 0.1)), t: C.clone() },
       low: { p: V(riverX(40) + 12, 2.5, 40), t: V(riverX(0), 2, 0) },
-      focus: e ? { p: V(e.pos[0] + 12, e.pos[1] + 8, e.pos[2] + 14), t: V(e.pos[0], e.pos[1] + 1.5, e.pos[2]) } : { p: C.clone().add(V(30, 20, 30)), t: C.clone() },
+      focus: e ? { p: V(e.pos[0] + 12 * k, e.pos[1] + 8 * k, e.pos[2] + 14 * k), t: V(e.pos[0], e.pos[1] + 1.5, e.pos[2]) } : { p: C.clone().add(V(30, 20, 30)), t: C.clone() },
     }
     anim.current = poses[cmd.view] ?? null
   }, [cmd, world])
@@ -189,7 +191,7 @@ export function WorldView({ world, quality, paused = false, hero = false }: { wo
   const water = useMemo(waterUniforms, [])
   const structKey = world.entities.filter((e) => e.type !== 'tree' && e.type !== 'rock').length
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const avoid = useMemo(() => world.entities.filter((e) => ['house', 'temple', 'school', 'well'].includes(e.type)).map((e) => [e.pos[0], e.pos[2], e.type === 'school' ? 8 : 5] as [number, number, number]), [structKey])
+  const avoid = useMemo(() => world.entities.filter((e) => ['house', 'temple', 'school', 'well', 'mansion'].includes(e.type)).map((e) => [e.pos[0], e.pos[2], e.type === 'mansion' ? 17 : e.type === 'school' ? 8 : 5] as [number, number, number]), [structKey])
   return (
     <GLBoundary>
       <Canvas

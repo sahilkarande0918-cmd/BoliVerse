@@ -1,9 +1,9 @@
-import type { ObjectType, Placement } from '../compiler/schema'
+import { INTERIOR_TYPES, type ObjectType, type Placement } from '../compiler/schema'
 import { BANK_D, DECK_Y, type Entity, type World, bridgeEnds, rng, riverSlope, riverX, terrainHeight, WATER_Y } from './world'
 
 // Deterministic spatial solvers. Everything is in metres; +x east, +z south, river runs along z.
 
-const FOOTPRINT: Partial<Record<ObjectType, number>> = { house: 6.5, temple: 9, school: 10, well: 3.5, tree: 2.2, rock: 1.6, lamp: 1, cart: 3 }
+const FOOTPRINT: Partial<Record<ObjectType, number>> = { house: 6.5, temple: 9, school: 10, well: 3.5, tree: 2.2, rock: 1.6, lamp: 1, cart: 3, mansion: 30, sofa: 0.1, bed: 0.1, table: 0.1, chandelier: 0.1, plant: 0.1, rug: 0.1 }
 export const footprint = (t: ObjectType) => FOOTPRINT[t] ?? 3
 
 const LAND_MIN_D = BANK_D + 3 // keep buildings off the river banks
@@ -15,7 +15,8 @@ export function isFree(w: World, x: number, z: number, r: number, ignore?: strin
   if (d < LAND_MIN_D + r * 0.4) return false
   if (Math.abs(d - ROAD_D) < 2.2 + r * 0.45 && w.entities.some((e) => e.type === 'road')) return false
   for (const e of w.entities) {
-    if (e.id === ignore || e.type === 'river' || e.type === 'road' || e.type === 'bridge') continue
+    if (e.id === ignore || e.type === 'river' || e.type === 'road' || e.type === 'bridge' || INTERIOR_TYPES.includes(e.type)) continue
+    if (r >= 20 && (e.type === 'tree' || e.type === 'rock' || e.type === 'lamp')) continue // big builds clear their site
     const min = (footprint(e.type) + r) * 0.5
     if ((e.pos[0] - x) ** 2 + (e.pos[2] - z) ** 2 < min * min) return false
   }
@@ -93,6 +94,18 @@ export function solvePlacement(
   if (type === 'river') return { pos: [0, WATER_Y, 0], rotY: 0 }
   if (type === 'road') return { pos: [0, 0.02, 0], rotY: 0 }
 
+  if (rel === 'inside' && ref?.type === 'mansion') return interiorSlot(w, type, ref, r)
+  if (type === 'mansion') {
+    const at = placement?.at ?? (ref && ref.type !== 'river' ? [ref.pos[0], ref.pos[2]] as [number, number] : undefined)
+    // prefer flat valley floor (hills start ~30 m from the river), then anywhere
+    const s = (at && sampleSpot(w, type, r, { around: at, radius: 30 }))
+      ?? sampleSpot(w, type, r, { side: placement?.side, dMin: 21, dMax: 27 })
+      ?? sampleSpot(w, type, r, { side: placement?.side, dMin: 27, dMax: 45 })
+      ?? sampleSpot(w, type, r, { dMin: 21, dMax: 70 })
+    if (!s) return null
+    return { pos: [s[0], Math.max(0, terrainHeight(s[0], s[1])), s[1]], rotY: facingRiver(s[0], s[1]) }
+  }
+
   let spot: [number, number] | null = null
   const fp = footprint(type)
   if (placement?.at) spot = isFree(w, placement.at[0], placement.at[1], fp) ? placement.at : sampleSpot(w, type, r, { around: placement.at, radius: 8 })
@@ -153,4 +166,31 @@ export function villageEntities(seed: number): Omit<Entity, 'id'>[] {
     push({ ...base, type: 'rock', pos: [x, terrainHeight(x, z) + 0.6, z], rotY: r() * 6.28, scale: 0.7 + r() * 0.8, meta: { seed: Math.floor(r() * 1e6) } })
   }
   return out
+}
+
+// ---------- interior design: furniture slots inside a mansion (mansion-local metres, +z = glass front) ----------
+const SLOTS: Record<string, [number, number, number, number][]> = { // x, z, rotY, y
+  sofa: [[-5.6, -3.6, 0, 0], [-8.6, -0.4, Math.PI / 2, 0], [-2.6, -0.4, -Math.PI / 2, 0]],
+  rug: [[-5.6, -0.6, 0, 0]],
+  table: [[2.6, 1.6, 0, 0], [-5.6, -0.6, 0, 0], [-8.5, 3.6, 0, 0]],
+  chandelier: [[2.6, 1.6, 0, 3.55], [-5.6, -0.6, 0, 3.55], [7.4, 2, 0, 3.55]],
+  plant: [[-9.2, -6.2, 0, 0], [-9.3, 4.2, 0, 0], [4.8, -1.3, 0, 0], [9.3, 4.2, 0, 0], [-2.3, -6.3, 0, 0]],
+  bed: [[7.4, 2, Math.PI, 0]],
+}
+export const MANSION_FLOOR = 0.62
+
+function interiorSlot(w: World, type: ObjectType, m: Entity, r: () => number): Resolved | null {
+  const c = Math.cos(m.rotY), s = Math.sin(m.rotY)
+  const toWorld = (x: number, z: number): [number, number] => [m.pos[0] + x * c + z * s, m.pos[2] - x * s + z * c]
+  const taken = (x: number, z: number) => w.entities.some((e) => e.type === type && (e.pos[0] - x) ** 2 + (e.pos[2] - z) ** 2 < 0.8)
+  for (const [lx, lz, rot, y] of SLOTS[type] ?? []) {
+    const [x, z] = toWorld(lx, lz)
+    if (!taken(x, z)) return { pos: [x, m.pos[1] + MANSION_FLOOR + y, z], rotY: m.rotY + rot }
+  }
+  // slots full: anywhere free on the open-plan floor
+  for (let i = 0; i < 40; i++) {
+    const [x, z] = toWorld(-9 + r() * 12, -5 + r() * 9)
+    if (!taken(x, z)) return { pos: [x, m.pos[1] + MANSION_FLOOR + (type === 'chandelier' ? 3.55 : 0), z], rotY: m.rotY + Math.floor(r() * 4) * (Math.PI / 2) }
+  }
+  return null
 }

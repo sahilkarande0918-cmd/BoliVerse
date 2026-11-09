@@ -1,4 +1,4 @@
-import type { CameraPreset, ObjectType, Operation, Selector } from './schema'
+import { INTERIOR_TYPES, type CameraPreset, type ObjectType, type Operation, type Selector } from './schema'
 import { type Entity, type World, emptyWorld, riverX as riverXAt, rng, terrainHeight } from '../engine/world'
 import { solvePlacement, villageEntities } from '../engine/spatial'
 
@@ -23,7 +23,7 @@ export interface ApplyResult {
   error?: string
 }
 
-const STRUCTURES: ObjectType[] = ['bridge', 'house', 'temple', 'school', 'well']
+const STRUCTURES: ObjectType[] = ['bridge', 'house', 'temple', 'school', 'well', 'mansion']
 
 /** Resolve a reference selector against the live world. Pure + deterministic. */
 export function resolve(w: World, sel: Selector | undefined, selectedId: string | null, purpose?: 'destroy' | 'repair'): Entity[] {
@@ -91,6 +91,12 @@ function create(w: World, op: Extract<Operation, { action: 'CREATE_OBJECT' | 'BA
     return { world, affected: [], notes: ['Bank roads already exist'], effects: [] }
   }
 
+  if (INTERIOR_TYPES.includes(type) && op.placement?.relation === 'inside' && !world.entities.some((e) => e.type === 'mansion')) {
+    const r = create(world, { action: 'CREATE_OBJECT', objectType: 'mansion' }, selectedId, 1)
+    world = r.world
+    affected.push(...r.affected)
+    notes.push('Built a mansion first — interiors need a home')
+  }
   if (type === 'road') {
     for (const rd of villageEntities(world.seed).filter((v) => v.type === 'road')) {
       const [rid, w2] = newId(world, 'road')
@@ -119,6 +125,11 @@ function create(w: World, op: Extract<Operation, { action: 'CREATE_OBJECT' | 'BA
     }
     world = { ...w2, entities: [...w2.entities, e] }
     affected.push(id)
+    if (type === 'mansion') {
+      const near = (x: Entity) => ['tree', 'rock', 'lamp'].includes(x.type) && Math.hypot(x.pos[0] - e.pos[0], x.pos[2] - e.pos[2]) < 22
+      const cleared = world.entities.filter(near).length
+      if (cleared) { world = { ...world, entities: world.entities.filter((x) => !near(x)) }; notes.push(`Cleared ${cleared} trees/rocks for the site`) }
+    }
   }
   if (sameSpot && type === 'bridge') notes.push(`Built on the same banks as ${sameSpot.id}`)
   return { world: touch(world, affected), affected, notes, effects: [] }
@@ -189,14 +200,14 @@ export function applyOperation(w: World, op: Operation, selectedId: string | nul
       return { world: { ...w, entities: w.entities.filter((e) => !ids.includes(e.id)), recent: w.recent.filter((id) => !ids.includes(id)) }, affected: ids, notes: [], effects: [] }
     }
     case 'DESTROY_STRUCTURE': {
-      const t = resolve(w, { type: 'bridge', ...op.target }, selectedId, 'destroy').filter((e) => STRUCTURES.includes(e.type))
+      const t = resolve(w, op.target.type || op.target.id || op.target.ref ? op.target : { type: 'bridge' }, selectedId, 'destroy').filter((e) => STRUCTURES.includes(e.type))
       if (!t.length) return none(`No intact structure matches ${describe(op.target)}`)
       const ids = t.map((e) => e.id)
       const world = mapTargets(w, ids, (e) => ({ ...e, state: 'destroyed', gen: e.gen + 1 }))
       return { world: touch(world, ids), affected: ids, notes: [`${ids.join(', ')} fractured into rigid bodies`], effects: [] }
     }
     case 'REPAIR_STRUCTURE': {
-      const t = resolve(w, { type: 'bridge', ...op.target }, selectedId, 'repair')
+      const t = resolve(w, op.target.type || op.target.id ? op.target : { ...op.target, type: 'bridge' }, selectedId, 'repair')
       if (!t.length) return none(`No destroyed structure matches ${describe(op.target)}`)
       // Rebuild as a fresh entity on the same spot; the ruin's debris stays in the river as history.
       const src = t[0]
@@ -216,7 +227,7 @@ export function applyOperation(w: World, op: Operation, selectedId: string | nul
     case 'SET_CAMERA':
       return fx([{ kind: 'camera', view: op.view, targetId: resolve(w, op.target, selectedId)[0]?.id }])
     case 'CREATE_CAMERA_PATH': {
-      const target = resolve(w, op.target ?? (op.preset.includes('bridge') || op.preset === 'destruction' ? { type: 'bridge' } : undefined), selectedId)[0]
+      const target = resolve(w, op.target ?? (op.preset.includes('bridge') || op.preset === 'destruction' ? { type: 'bridge' } : op.preset === 'interior' || op.preset === 'mansion_reveal' ? { type: 'mansion' } : undefined), selectedId)[0]
       return fx([{ kind: 'path', preset: op.preset, durationSec: op.durationSec ?? 8, targetId: target?.id }])
     }
     case 'PLAY_CAMERA_PATH':

@@ -3,7 +3,8 @@ import { z } from 'zod'
 // The allow-listed operation language. Everything the voice/LLM layer produces must parse here,
 // otherwise it is rejected. No code, URLs or shaders can travel through these types.
 
-export const OBJECT_TYPES = ['house', 'tree', 'bridge', 'river', 'road', 'rock', 'temple', 'well', 'school', 'lamp', 'cart'] as const
+export const OBJECT_TYPES = ['house', 'tree', 'bridge', 'river', 'road', 'rock', 'temple', 'well', 'school', 'lamp', 'cart', 'mansion', 'sofa', 'bed', 'table', 'chandelier', 'plant', 'rug'] as const
+export const INTERIOR_TYPES: readonly string[] = ['sofa', 'bed', 'table', 'chandelier', 'plant', 'rug']
 export const ObjectType = z.enum(OBJECT_TYPES)
 export type ObjectType = z.infer<typeof ObjectType>
 
@@ -28,7 +29,7 @@ export type Selector = z.infer<typeof Selector>
 
 export const Placement = z
   .object({
-    relation: z.enum(['across', 'near', 'between', 'left_of', 'right_of', 'behind', 'in_front', 'same_place', 'along', 'scatter', 'at']),
+    relation: z.enum(['across', 'near', 'between', 'left_of', 'right_of', 'behind', 'in_front', 'same_place', 'along', 'scatter', 'at', 'inside']),
     ref: Selector.optional(),
     ref2: Selector.optional(),
     at: z.tuple([z.number().min(-80).max(80), z.number().min(-80).max(80)]).optional(),
@@ -45,7 +46,7 @@ const props = {
 }
 
 const DURATION = z.number().min(2).max(30)
-export const CameraPreset = z.enum(['establishing', 'river_reveal', 'bridge_flythrough', 'under_bridge', 'sunset_panorama', 'orbit', 'destruction'])
+export const CameraPreset = z.enum(['establishing', 'river_reveal', 'bridge_flythrough', 'under_bridge', 'sunset_panorama', 'orbit', 'destruction', 'mansion_reveal', 'interior'])
 export type CameraPreset = z.infer<typeof CameraPreset>
 
 export const Operation = z.discriminatedUnion('action', [

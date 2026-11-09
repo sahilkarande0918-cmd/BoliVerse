@@ -1,5 +1,5 @@
 import { MAX_PHRASE, NUMBER_WORDS, PHRASES, STOPWORDS } from './lexicon'
-import type { CameraPreset, Color, Material, ObjectType, Operation, Placement, Selector } from './schema'
+import { INTERIOR_TYPES, type CameraPreset, type Color, type Material, type ObjectType, type Operation, type Placement, type Selector } from './schema'
 
 // Path A: deterministic, zero-latency multilingual intent parser. Handles the common command
 // vocabulary in English / Hindi / Marathi / code-mixed speech. Anything it is unsure about is
@@ -109,7 +109,8 @@ function roles(toks: Tok[]) {
   for (const o of objs) {
     for (const r of relIdx) {
       const between = toks.slice(o.i + 1, r)
-      if (r > o.i && r - o.i <= 3 && between.some((t) => GENITIVE.has(t.raw)) && between.every((t) => STOP.has(t.raw))) o.ref = true
+      const fusedGen = GENITIVE.has(toks[r].raw.split(' ')[0]) // "ke andar", "के पास" matched as one token
+      if (r > o.i && r - o.i <= 3 && (fusedGen || between.some((t) => GENITIVE.has(t.raw))) && between.every((t) => STOP.has(t.raw))) o.ref = true
     }
   }
   if (objs.some((o) => o.ref)) {
@@ -123,6 +124,10 @@ function roles(toks: Tok[]) {
     }
   }
   if (objs.length && objs.every((o) => o.ref)) objs[0].ref = false
+  // Locatives ("बंगले में कालीन", "बंगल्यात पलंग"): furniture + mansion → the mansion is the container.
+  if (objs.some((o) => o.type === 'mansion') && objs.some((o) => INTERIOR_TYPES.includes(o.type))) {
+    for (const o of objs) o.ref = o.type === 'mansion'
+  }
   const target = objs.find((o) => !o.ref)
   const refs = objs.filter((o) => o.ref)
   return { target: target?.type, refs: refs.map((r) => r.type) }
@@ -133,7 +138,7 @@ function countOf(toks: Tok[], type?: ObjectType): number | undefined {
   if (nums.length) return Math.round(nums[nums.length - 1].num!)
   if (has(toks, 'MANY') || has(toks, 'SCENE') && toks.some((t) => t.c.includes('SCENE:forest'))) return 15
   if (has(toks, 'FEW')) return 5
-  if (type && toks.some((t) => t.c.includes(`OBJ:${type}`) && /^[a-z]+s$|[a-z]on$|ों$|े$/.test(t.raw))) return 3
+  if (type && toks.some((t) => t.c.includes(`OBJ:${type}`) && /^[a-z]+s$|^(gharon|pedon|makaanon|jhaadon)$|ों$|े$/.test(t.raw))) return 3
   return undefined
 }
 function isUnitNum(toks: Tok[], t: Tok) {
@@ -159,6 +164,7 @@ function selector(toks: Tok[], type: ObjectType | undefined, refs: ObjectType[])
 
 function placement(toks: Tok[], type: ObjectType, refs: ObjectType[]): Placement | undefined {
   if (has(toks, 'SAME')) return { relation: 'same_place' }
+  if (INTERIOR_TYPES.includes(type) && (!refs.length || refs[0] === 'mansion' || has(toks, 'REL:inside'))) return { relation: 'inside', ref: { type: 'mansion' } }
   const side = val(toks, 'SIDE') as 'west' | 'east' | undefined
   const rel = val(toks, 'REL') as Placement['relation'] | undefined
   if (rel === 'between' && refs.length) return { relation: 'between', ref: { type: refs[0] }, ref2: { type: refs[1] ?? refs[0], ref: 'previous' } }
@@ -175,7 +181,9 @@ function cameraOps(toks: Tok[], text: string): Operation[] {
   const ops: Operation[] = []
   let preset: CameraPreset | undefined
   if (has(toks, 'TIME:sunset')) { ops.push({ action: 'SET_TIME_OF_DAY', time: 'sunset' }); if (!mentions('bridge')) preset = 'sunset_panorama' }
+  const interiorWords = has(toks, 'REL:inside') || has(toks, 'INTERIOR') || INTERIOR_TYPES.some((t) => mentions(t as ObjectType))
   if (has(toks, 'ORBIT')) preset = 'orbit'
+  else if (mentions('mansion') || interiorWords) preset = interiorWords ? 'interior' : 'mansion_reveal'
   else if (has(toks, 'V:destroy')) preset = 'destruction'
   else if (mentions('bridge') && has(toks, 'LOW') && !has(toks, 'HIGH') && !has(toks, 'REL:across')) preset = 'under_bridge'
   else if (mentions('bridge')) preset = 'bridge_flythrough'
