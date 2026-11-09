@@ -21,7 +21,7 @@ const L: Record<string, string> = {
 
   // ---- verbs ----
   'V:create': 'make build create add construct place put plant generate spawn banao banaao bana banado banana banaye banaiye bnao banaa daalo dalo lagao rakho ugao ho hona chahiye bandho bandha banva banwa tayar taiyar lava ugva बनाओ बनाइए बना बनाना बनाएं डालो लगाओ रखो उगाओ हो होना चाहिए बांधो बांधा बनवा तयार लावा',
-  'V:destroy': 'destroy break smash blow_up collapse demolish wreck tod todo todh tor toro todo_do tod_do tod_de gira girao gira_do uda_do ura_do nasht paada padun todun तोड़ो तोड़ तोडो तोड गिराओ गिरा नष्ट उड़ा उड़ाओ तोडा तोडून पाडा ध्वस्त',
+  'V:destroy': 'तो_दो to_do_do destroy break smash blow_up collapse demolish wreck tod todo todh tor toro todo_do tod_do tod_de gira girao gira_do uda_do ura_do nasht paada padun todun तोड़ो तोड़ तोडो तोड गिराओ गिरा नष्ट उड़ा उड़ाओ तोडा तोडून पाडा ध्वस्त',
   'V:delete': 'delete remove erase hatao hata hata_do nikalo nikaal mitao kadha kaadh kaadha हटाओ हटा निकालो मिटाओ काढा काढ',
   'V:repair': 'repair fix rebuild restore reconstruct theek thik sudhaar sudharo jod jodo ठीक सुधारो जोड़ो दुरुस्त',
   'V:bigger': 'bigger larger wider longer enlarge increase grow bada bara badha badhao bade badi chauda lamba mota motha mothe mothi vadhva बड़ा बडा बड़े बड़ी बढ़ाओ बढाओ चौड़ा लंबा मोठा मोठे वाढवा',

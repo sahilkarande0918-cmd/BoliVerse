@@ -24,6 +24,8 @@ export default {
     form.append('model', model)
     form.append('language_code', lang)
     if (model === 'prisma-v3.0') form.append('format', 'codemix')
+    // Prisma keyterm biasing (comma-separated) for the command vocabulary — verified to fix "tod do" → "तो दो".
+    form.append('keyterms', 'tod do,bridge,pul,nadi,gaon,ghar,banao,bada karo,sunset,cinematic,camera,video,undo,same jagah,stone bridge,wooden bridge')
     form.append('topic', 'Voice commands for a 3D world editor: village, river, bridge, house, tree, camera, video, sunset, rain.')
 
     const t0 = Date.now()

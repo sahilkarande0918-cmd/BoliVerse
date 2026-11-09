@@ -17,6 +17,7 @@ export interface LogEntry {
   source: 'voice' | 'text' | 'chip'
   planner: 'local' | 'groq' | 'none'
   language?: string
+  provider?: string
   ops: Operation[]
   notes: string[]
   errors: string[]
@@ -52,7 +53,8 @@ interface State {
   select: (id: string | null) => void
   undo: (steps?: number) => void
   redo: (steps?: number) => void
-  run: (text: string, source: LogEntry['source'], extra?: { stt?: number; t0?: number; language?: string }) => Promise<void>
+  run: (text: string, source: LogEntry['source'], extra?: { stt?: number; t0?: number; language?: string; provider?: string }, presetOps?: Operation[]) => Promise<void>
+  sttCalls: number
   save: (name?: string) => Promise<void>
   load: (name?: string) => Promise<void>
   importJson: (json: string) => void
@@ -98,6 +100,7 @@ export const useStudio = create<State>()((set, get) => ({
   recording: { state: 'idle', progress: 0 },
   force: { seq: 0, ids: [], strength: 0 },
   fps: 0,
+  sttCalls: 0,
   set: (p) => set(p),
   select: (id) => set({ selectedId: id }),
 
@@ -115,17 +118,17 @@ export const useStudio = create<State>()((set, get) => ({
     set({ world: future[n - 1], future: future.slice(n), past: [...past, world, ...future.slice(0, n - 1)].slice(-50) })
   },
 
-  async run(text, source, extra = {}) {
+  async run(text, source, extra = {}, presetOps) {
     const id = ++utterSeq
     latest = id
     const t0 = extra.t0 ?? performance.now()
     const lastOps = [...get().log].reverse().find((l) => l.status !== 'error' && l.ops.length)?.ops ?? []
-    const entry: LogEntry = { id, transcript: text, source, planner: 'local', language: extra.language, ops: [], notes: [], errors: [], affected: [], t: { stt: extra.stt }, status: 'pending' }
+    const entry: LogEntry = { id, transcript: text, source, planner: 'local', language: extra.language, provider: extra.provider, ops: [], notes: [], errors: [], affected: [], t: { stt: extra.stt }, status: 'pending' }
     const patch = (p: Partial<LogEntry>) => set({ log: get().log.map((l) => (l.id === id ? { ...l, ...p, t: { ...l.t, ...p.t } } : l)) })
     set({ log: [...get().log.slice(-60), entry], phase: 'interpreting', message: 'Understanding…' })
 
     const tp = performance.now()
-    const local = parseLocal(text, { lastOps })
+    const local = presetOps ? { ops: presetOps, confidence: 1, normalized: text, unknown: [] } : parseLocal(text, { lastOps })
     let ops = local.ops
     let planner: LogEntry['planner'] = 'local'
     const notes: string[] = []

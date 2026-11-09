@@ -24,7 +24,7 @@ export default {
             voice: env('GNANI_TTS_VOICE') ?? 'Shivani',
             language: lang,
             speed: 1.0,
-            audio_config: { sample_rate: 24000, num_channels: 1, sample_width: 2, encoding: 'linear_pcm', container: 'mp3', bitrate: 64000 },
+            audio_config: { sample_rate: 24000, num_channels: 1, sample_width: 2, encoding: 'linear_pcm', container: 'mp3', bitrate: '64k' },
           }),
         },
         15_000,

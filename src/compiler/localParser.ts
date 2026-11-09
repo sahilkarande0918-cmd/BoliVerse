@@ -247,6 +247,9 @@ function clauseOps(toks: Tok[], ctx: ParseContext, inherited?: string): Operatio
   const light = val(toks, 'LIGHT')
   if (light) ops.push({ action: 'SET_LIGHTING', preset: light as 'soft' })
   if (has(toks, 'SCENE:blank')) return [{ action: 'CREATE_SCENE', template: 'blank' }]
+  // "पाऊस पाडा" (make it rain) uses a verb that also means "knock down": with no object named,
+  // an environment clause never triggers structure verbs.
+  if (ops.length && !target && !has(toks, 'PRON') && !has(toks, 'SCENE')) return ops
 
   const sel = () => selector(toks, target, refs)
   const scaleBy = has(toks, 'DOUBLE') ? 2 : has(toks, 'HALF') ? 0.5 : has(toks, 'MUCH') ? 1.8 : has(toks, 'LITTLE') ? 1.3 : 1.5
