@@ -1,20 +1,32 @@
 # Next steps (prioritised)
 
-Done on 9 Nov 2026 (the session after compaction):
+Done on 9 Nov 2026:
 - the "wapas banao" fix
-- Ultra re-verified
-- the demo film re-rendered with High graphics
-- the realism docs written (REALISM_AUDIT, RENDERING_DECISIONS, ASSET_LICENSES)
+- Ultra verified; Ultra is now the default everywhere
+- the 60 s social film re-rendered at Ultra (`public/demo/boliverse-demo.mp4`)
+- the realism docs
+- the **official 2–3 min demo** (see below)
 
-The last user request ("continue … edit that video on dashboard to latest high graphics and make it again") is **complete**.
+## Official demo (for the submission form)
+- **File:** `deliverables/BoliVerse_Gnani_Official_Demo_1080p.mp4`. It is git-ignored; upload it to YouTube as **Unlisted**.
+- **Docs:** script, shot list, SRT, thumbnail and `DEMO_VERIFICATION.md` are in `deliverables/`.
+- **What it builds:** a new world rather than the village or mansion: a river, 20 trees, a temple with 5 lamps, a Marathi stone bridge at sunrise, a scanned Poly Haven bench, a red temple with undo/redo, rain, then Simulate (bridge broken, route blocked), a steel rebuild at sunset, and a Film-mode camera with a real in-app MP4 export.
+- **Pipeline:** `video-production/gnani-official-demo/scripts/` (lines → voices → schedule → capture → make-media → build-film → render → master → write-docs). It is documented in `video-production/gnani-official-demo/README.md`.
+  - Raw frames and media are git-ignored and local only.
+  - The pipeline needs `npm run dev` running.
+  - Capture uses a headed Edge window. Don't cover it; occlusion flags are set anyway.
 
-1. **Human checks (user):**
-   - a human-voice mic test on https://boliverse.vercel.app/#/studio
+## Still to do (user)
+1. **Human checks:**
+   - a human-voice mic test on https://boliverse.vercel.app/#/studio; the official demo uses synthetic Timbre voices and says so
    - check the Gnani Discord
-   - a public LinkedIn/X post with the new `public/demo/boliverse-demo.mp4`, tagging Gnani with `#GnaniAI #GreatIndianAIInternshipChallenge`
-   - the official form before **10 Nov 2026 11:59 PM IST**
+   - confirm the team credit "Sahil Karande & Purvesh Mhatre" on the end slate; the repo docs list only Sahil (Solo Ninja category)
+2. **Submission:**
+   - upload the official demo as Unlisted YouTube and post the 60 s film publicly with `#GnaniAI #GreatIndianAIInternshipChallenge`
+   - submit the official form before **10 Nov 2026 11:59 PM IST**
    - rotate the API keys afterwards
-2. Optional polish:
-   - p95 frame spikes (first-use shader compiles) could be cut by calling `gl.compile(scene, camera)` after the village spawns.
-   - Live Poly Haven prop loading ("ek kursi banao", "add a barrel near the temple") is still not visually verified in the browser.
-3. The current film is the Ultra render. To re-render it again: in the studio tab (dev server), run `const m=await import('/src/dev/demoFilm.ts'); m.makeDemoFilm(s=>console.log(s), 'ultra')`. It takes about 8 minutes at Ultra and makes 14 Gnani calls. The encoder is now capped at 6 Mbps so the file stays under GitHub's 100 MB limit.
+
+## Optional polish
+- **p95 frame spikes:** caused by first-use shader compiles; `gl.compile(scene, camera)` after spawns would help.
+- **Music bed:** the official demo has none (no licensed or local source); add one in the HyperFrames project (`film/index.html`) if wanted.
+- **Re-render the 60 s film:** run `const m=await import('/src/dev/demoFilm.ts'); m.makeDemoFilm(s=>console.log(s))` (Ultra by default, about 8 min, 14 Gnani calls).

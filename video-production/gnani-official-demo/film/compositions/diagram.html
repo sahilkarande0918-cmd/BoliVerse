@@ -1,0 +1,34 @@
+<template>
+<style>@font-face{font-family:'Jost';src:url('assets/fonts/jost.woff2') format('woff2');font-weight:300 600}
+@font-face{font-family:'Noto Sans Devanagari';src:url('assets/fonts/noto-devanagari.woff2') format('woff2');font-weight:300 600}
+#root{position:absolute;inset:0;--bg:#e7e0d8;--panel:#f2ede7;--ink:#34302d;--muted:#5c534d;--faint:#6f665f;--line:rgba(52,48,45,.16);font-family:'Jost','Noto Sans Devanagari',sans-serif;color:var(--ink);overflow:hidden}
+#root{background:var(--bg)}#dg-head{position:absolute;left:120px;top:150px;display:flex;gap:28px;align-items:baseline}
+.ey{font-size:24px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}.note{font-size:22px;color:var(--muted)}
+#dg-row{position:absolute;left:120px;right:120px;top:330px;display:flex;align-items:stretch}
+.node{position:relative;flex:1;border-top:2px solid var(--ink);padding-top:22px;min-width:0}.ln{position:relative;width:34px;flex:none}
+.ln i{position:absolute;left:4px;right:4px;top:-1px;height:2px;background:var(--faint)}
+.n-a{font-size:34px;font-weight:500;letter-spacing:-.01em;line-height:1.1}.n-b{font-size:24px;color:var(--muted);margin-top:12px;line-height:1.35;padding-right:12px}
+.wide{position:absolute;top:640px;width:560px;flex:none}#dg-timbre{left:120px}#dg-mp4{right:120px;text-align:right}</style>
+<div id="root" data-composition-id="diagram" data-width="1920" data-height="1080" data-duration="13.733">
+<div id="dg-head" class="clip" data-start="0.2" data-duration="13.333"><span class="ey">How it works</span><span class="note">Diagram, not app footage</span></div><div id="dg-row"><div id="dg-voice" class="clip node" data-start="0.3" data-duration="13.433"><div class="n-a">Your voice</div><div class="n-b">Hindi · Marathi · English · Hinglish</div></div><div id="dg-prisma-ln" class="clip ln" data-start="2" data-duration="11.733"><i></i></div><div id="dg-prisma" class="clip node" data-start="2" data-duration="11.733"><div class="n-a">Gnani Prisma</div><div class="n-b">speech → text</div></div><div id="dg-comp-ln" class="clip ln" data-start="3.44" data-duration="10.293"><i></i></div><div id="dg-comp" class="clip node" data-start="3.44" data-duration="10.293"><div class="n-a">Command compiler</div><div class="n-b">local multilingual parser · Groq fallback</div></div><div id="dg-zod-ln" class="clip ln" data-start="6.72" data-duration="7.013"><i></i></div><div id="dg-zod" class="clip node" data-start="6.72" data-duration="7.013"><div class="n-a">Validated commands</div><div class="n-b">every operation checked against a schema</div></div><div id="dg-three-ln" class="clip ln" data-start="8.2" data-duration="5.533"><i></i></div><div id="dg-three" class="clip node" data-start="8.2" data-duration="5.533"><div class="n-a">Three.js world</div><div class="n-b">persistent, editable 3D scene</div></div><div id="dg-rapier-ln" class="clip ln" data-start="9.2" data-duration="4.533"><i></i></div><div id="dg-rapier" class="clip node" data-start="9.2" data-duration="4.533"><div class="n-a">Rapier physics</div><div class="n-b">debris, buoyancy, routes</div></div></div><div id="dg-timbre" class="clip node wide" data-start="11.12" data-duration="2.613"><div class="n-a">Gnani Timbre</div><div class="n-b">spoken replies · the voices in this film (synthetic)</div></div>
+<div id="dg-mp4" class="clip node wide" data-start="9.7" data-duration="4.033"><div class="n-a">MP4 export</div><div class="n-b">WebCodecs, in the browser</div></div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+tl.fromTo("#dg-head > *", { opacity: 0 }, { opacity: 1, duration: .5, stagger: .1 }, 0.2);
+tl.fromTo("#dg-voice > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 0.3);
+tl.fromTo("#dg-prisma-ln i", { scaleX: 0 }, { scaleX: 1, duration: .35, ease: "power2.out", transformOrigin: "0 50%" }, 2);
+tl.fromTo("#dg-prisma > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 2.2);
+tl.fromTo("#dg-comp-ln i", { scaleX: 0 }, { scaleX: 1, duration: .35, ease: "power2.out", transformOrigin: "0 50%" }, 3.44);
+tl.fromTo("#dg-comp > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 3.64);
+tl.fromTo("#dg-zod-ln i", { scaleX: 0 }, { scaleX: 1, duration: .35, ease: "power2.out", transformOrigin: "0 50%" }, 6.72);
+tl.fromTo("#dg-zod > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 6.92);
+tl.fromTo("#dg-three-ln i", { scaleX: 0 }, { scaleX: 1, duration: .35, ease: "power2.out", transformOrigin: "0 50%" }, 8.2);
+tl.fromTo("#dg-three > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 8.4);
+tl.fromTo("#dg-rapier-ln i", { scaleX: 0 }, { scaleX: 1, duration: .35, ease: "power2.out", transformOrigin: "0 50%" }, 9.2);
+tl.fromTo("#dg-rapier > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 9.4);
+tl.fromTo("#dg-timbre > *, #dg-mp4 > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, stagger: .06, ease: "power3.out" }, 9.7);
+
+window.__timelines["diagram"] = tl;
+</script>
+</template>

@@ -291,7 +291,12 @@ function clauseOps(toks: Tok[], ctx: ParseContext, inherited?: string): Operatio
       return [...ops, { action: 'APPLY_FORCE', target: target ? { ...sel(), ref: sel().ref ?? 'all' } : { type: 'rock', ref: 'all' }, strength: has(toks, 'MUCH') ? 9 : 5 }]
   }
 
-  const isCreate = verb === 'create' || verb === undefined
+  // 'temple ko laal karo' / 'make the temple red': a colour/material word AFTER the object edits it;
+  // before it ('laal ghar banao', 'stone bridge banao') it describes a new one.
+  const at = (p: (c: string) => boolean) => toks.findIndex((t) => t.c.some(p))
+  const recolour = !!target && !!(color || material) && !has(toks, 'NUM') && !has(toks, 'AGAIN') &&
+    at((c) => c === 'OBJ:' + target) < at((c) => c.startsWith('COLOR:') || c.startsWith('MAT:'))
+  const isCreate = (verb === 'create' || verb === undefined) && !recolour
   if (has(toks, 'SCENE:village') && isCreate) return [...ops, { action: 'CREATE_SCENE', template: 'village' }]
   if (has(toks, 'SCENE:forest') && isCreate) return [...ops, { action: 'BATCH_CREATE', objectType: 'tree', count: countOf(toks) ?? 15 }]
 
@@ -301,7 +306,8 @@ function clauseOps(toks: Tok[], ctx: ParseContext, inherited?: string): Operatio
     const words = toks.filter((t) => !t.c.length && !STOP.has(t.raw) && !/^\d/.test(t.raw) && t.raw !== ',').map((t) => t.raw).slice(0, 3)
     if (words.length) {
       const count = countOf(toks) ?? 1
-      const base = { objectType: 'prop' as const, asset: words.join(' '), placement: placement(toks, 'prop', refs) }
+      // the material is part of the search ("wooden bench" must not match a metal bench vice)
+      const base = { objectType: 'prop' as const, asset: [material, ...words].filter(Boolean).join(' '), placement: placement(toks, 'prop', refs) }
       return [...ops, count > 1 ? { action: 'BATCH_CREATE', ...base, count: Math.min(12, count) } : { action: 'CREATE_OBJECT', ...base }]
     }
   }

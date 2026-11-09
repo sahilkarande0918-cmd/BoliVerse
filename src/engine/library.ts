@@ -51,7 +51,7 @@ export async function resolveAsset(query: string): Promise<Resolution> {
   return { ok: true, id: best.id, name: best.name }
 }
 
-const gltfLoader = new GLTFLoader()
+
 const modelCache = new Map<string, Promise<THREE.Group>>()
 /** Load (once) and return a fresh clone of a Poly Haven model at 1k textures. */
 export async function loadModel(id: string): Promise<THREE.Group> {
@@ -63,7 +63,11 @@ export async function loadModel(id: string): Promise<THREE.Group> {
       if (!g?.url?.startsWith(CDN)) throw new Error('model unavailable')
       const size = g.size + Object.values(g.include ?? {}).reduce((n: number, v) => n + ((v as { size?: number }).size ?? 0), 0)
       if (size > MAX_BYTES) throw new Error('model too heavy for real-time use')
-      const gltf = await gltfLoader.loadAsync(g.url)
+      // textures live under different CDN paths than the .gltf: map each relative file to its listed URL
+      const files = Object.entries(g.include ?? {}) as [string, { url?: string }][]
+      const manager = new THREE.LoadingManager()
+      manager.setURLModifier((u) => files.find(([rel, v]) => u.endsWith(rel) && v.url?.startsWith(CDN))?.[1].url ?? u)
+      const gltf = await new GLTFLoader(manager).loadAsync(g.url)
       gltf.scene.traverse((o) => { if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true } })
       return gltf.scene
     })

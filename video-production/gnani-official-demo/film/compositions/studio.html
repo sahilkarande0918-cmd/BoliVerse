@@ -1,0 +1,111 @@
+<template>
+<style>@font-face{font-family:'Jost';src:url('assets/fonts/jost.woff2') format('woff2');font-weight:300 600}
+@font-face{font-family:'Noto Sans Devanagari';src:url('assets/fonts/noto-devanagari.woff2') format('woff2');font-weight:300 600}
+#root{position:absolute;inset:0;--bg:#e7e0d8;--panel:#f2ede7;--ink:#34302d;--muted:#5c534d;--faint:#6f665f;--line:rgba(52,48,45,.16);font-family:'Jost','Noto Sans Devanagari',sans-serif;color:var(--ink);overflow:hidden}
+#st-cam{position:absolute;inset:0;transform-origin:0px 430px}#st-cam video{position:absolute;inset:0;width:1920px;height:1080px}
+.tour{position:absolute}.tour-box{position:absolute;inset:0;border:2px solid rgba(52,48,45,.85);box-shadow:0 0 0 9999px rgba(231,224,216,.0)}
+.tour-tag{position:absolute;background:var(--ink);color:#f4efe9;font-size:26px;letter-spacing:.04em;padding:8px 14px;white-space:nowrap}
+.chap{position:absolute;left:388px;top:86px;display:flex;align-items:baseline;gap:14px;background:rgba(242,237,231,.94);padding:12px 22px 12px 18px;border:1px solid var(--line)}
+.ch-n{font-size:22px;color:var(--muted);letter-spacing:.1em}.ch-name{font-size:26px;letter-spacing:.32em;text-transform:uppercase;font-weight:500}
+.bcard{position:absolute;left:420px;width:1120px;bottom:118px;background:rgba(52,48,45,.94);color:#f4efe9;padding:22px 30px 24px;text-align:left}
+.b-ey{font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:#e2d9cf}.b-say{font-size:38px;line-height:1.3;margin-top:10px;font-weight:400}
+.b-say.deva{font-family:'Noto Sans Devanagari','Jost',sans-serif}.b-en{font-size:27px;color:#e2d9cf;margin-top:8px;font-weight:300}
+.lt{position:absolute;right:340px;top:86px;text-align:right;background:rgba(242,237,231,.95);padding:14px 22px;border:1px solid var(--line)}
+.lt-a{font-size:27px;font-weight:500}.lt-b{font-size:23px;color:var(--muted);margin-top:4px}
+#pip{position:absolute;left:356px;top:56px;width:1248px;height:960px;display:flex;align-items:center;justify-content:center}
+#pip-in{width:896px;height:504px;position:relative;box-shadow:0 30px 80px -20px rgba(46,42,39,.55);border:1px solid rgba(255,255,255,.6)}
+#pip-in video{position:absolute;inset:0;width:896px;height:504px;object-fit:cover}</style>
+<div id="root" data-composition-id="studio" data-width="1920" data-height="1080" data-duration="122.533">
+<div id="st-cam">
+<video id="st-main" class="clip" data-start="0" data-duration="114.6" src="assets/media/studio.mp4" muted playsinline></video>
+<video id="st-exp" class="clip" data-start="114.6" data-duration="3.6" src="assets/media/export.mp4" muted playsinline></video>
+<video id="st-ready" class="clip" data-start="118.2" data-duration="4.333" src="assets/media/ready.mp4" muted playsinline></video>
+</div>
+<div id="tr-voice" class="clip tour" data-start="0.6" data-duration="10.284" style="left:4px;top:60px;width:332px;height:1016px"><div class="tour-box"></div><span class="tour-tag" style="top:14px;left:14px">Voice Studio</span></div>
+<div id="tr-world" class="clip tour" data-start="1.96" data-duration="8.924" style="left:360px;top:60px;width:1240px;height:952px"><div class="tour-box"></div><span class="tour-tag" style="top:14px;left:14px">Live 3D world</span></div>
+<div id="tr-insp" class="clip tour" data-start="4.36" data-duration="6.524" style="left:1624px;top:60px;width:292px;height:1016px"><div class="tour-box"></div><span class="tour-tag" style="top:14px;left:14px">Inspector</span></div>
+<div id="tr-tabs" class="clip tour" data-start="7.08" data-duration="3.804" style="left:872px;top:12px;width:176px;height:32px"><div class="tour-box"></div><span class="tour-tag" style="top:52px;left:0">Build · Simulate · Film</span></div>
+<div id="ch-0" class="clip chap" data-start="11.1" data-duration="3.2"><span class="ch-n">01</span><span class="ch-name">Build</span></div>
+<div id="ch-1" class="clip chap" data-start="27.4" data-duration="3.2"><span class="ch-n">02</span><span class="ch-name">Understand</span></div>
+<div id="ch-2" class="clip chap" data-start="54.133" data-duration="3.2"><span class="ch-n">03</span><span class="ch-name">Create</span></div>
+<div id="ch-3" class="clip chap" data-start="84.4" data-duration="3.2"><span class="ch-n">04</span><span class="ch-name">Simulate</span></div>
+<div id="ch-4" class="clip chap" data-start="108.867" data-duration="3.2"><span class="ch-n">05</span><span class="ch-name">Film</span></div>
+<div id="bd-b01" class="clip bcard" data-start="11.183" data-duration="4.384"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“एक नदी बनाओ और बीस पेड़ लगाओ।”</div><div class="b-en">Make a river, and plant twenty trees.</div></div>
+<div id="bd-b02" class="clip bcard" data-start="27.517" data-duration="5.65"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“नदी के पास एक मंदिर बनाओ और मंदिर के पास पाँच lamp लगाओ।”</div><div class="b-en">Build a temple near the river, and put five lamps near the temple.</div></div>
+<div id="bd-b03" class="clip bcard" data-start="41.917" data-duration="5.016"><div class="b-ey">Builder · Marathi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“नदीवर दगडी पूल बांधा आणि सूर्योदय करा.”</div><div class="b-en">Build a stone bridge over the river, and make it sunrise.</div></div>
+<div id="bd-b04" class="clip bcard" data-start="54.25" data-duration="4.383"><div class="b-ey">Builder · English · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say">“Put a wooden bench near the temple.”</div></div>
+<div id="bd-b05" class="clip bcard" data-start="65.883" data-duration="3.017"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“मंदिर को लाल करो।”</div><div class="b-en">Make the temple red.</div></div>
+<div id="bd-b06" class="clip bcard" data-start="74.783" data-duration="2.784"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“बारिश शुरू करो।”</div><div class="b-en">Start the rain.</div></div>
+<div id="bd-b07" class="clip bcard" data-start="85.417" data-duration="3.483"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“अब bridge तोड़ दो।”</div><div class="b-en">Now break the bridge.</div></div>
+<div id="bd-b08" class="clip bcard" data-start="98.083" data-duration="4.517"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“steel bridge वापस बनाओ और sunset कर दो।”</div><div class="b-en">Rebuild the bridge in steel, and make it sunset.</div></div>
+<div id="bd-b09" class="clip bcard" data-start="109.883" data-duration="5.417"><div class="b-ey">Builder · Hindi · Gnani Timbre test voice → Gnani Prisma</div><div class="b-say deva">“cinematic camera से मंदिर दिखाओ। आठ second का video बनाओ।”</div><div class="b-en">Show the temple with a cinematic camera; make an eight-second video.</div></div>
+<div id="lt-prisma" class="clip lt" data-start="14.167" data-duration="3.4"><div class="lt-a">Gnani Prisma v3.0</div><div class="lt-b">speech to text · language auto-detect</div></div>
+<div id="lt-lib" class="clip lt" data-start="59.533" data-duration="3.6"><div class="lt-a">Poly Haven model library</div><div class="lt-b">CC0 scanned models, searched by your words</div></div>
+<div id="lt-undo" class="clip lt" data-start="70.6" data-duration="2.8"><div class="lt-a">Undo · Redo</div><div class="lt-b">real clicks on the toolbar</div></div>
+<div id="lt-rapier" class="clip lt" data-start="89.2" data-duration="4.2"><div class="lt-a">Rapier physics + route graph</div><div class="lt-b">debris is simulated; the crossing is blocked</div></div>
+<div id="lt-exp" class="clip lt" data-start="114.75" data-duration="3.3"><div class="lt-a">In-app export, real time</div><div class="lt-b">≈23 s of rendering, shown faster</div></div>
+<div id="lt-file" class="clip lt" data-start="118.6" data-duration="3.733"><div class="lt-a">The exported file</div><div class="lt-b">1280×720 · H.264 MP4 · 8 s · silent</div></div>
+<div id="pip"><div id="pip-in"><video id="pip-v" class="clip" data-start="118.4" data-duration="4.133" data-media-start="0.6" src="assets/media/inapp-export.mp4" muted playsinline></video></div></div>
+
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+tl.fromTo("#tr-voice .tour-box", { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: .45, ease: "power3.out" }, 0.6);
+tl.fromTo("#tr-voice .tour-tag", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .4, ease: "power3.out" }, 0.7);
+tl.to("#tr-voice > *", { opacity: 0, duration: .25 }, 10.584);
+tl.fromTo("#tr-world .tour-box", { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: .45, ease: "power3.out" }, 1.96);
+tl.fromTo("#tr-world .tour-tag", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .4, ease: "power3.out" }, 2.06);
+tl.to("#tr-world > *", { opacity: 0, duration: .25 }, 10.584);
+tl.fromTo("#tr-insp .tour-box", { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: .45, ease: "power3.out" }, 4.36);
+tl.fromTo("#tr-insp .tour-tag", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .4, ease: "power3.out" }, 4.46);
+tl.to("#tr-insp > *", { opacity: 0, duration: .25 }, 10.584);
+tl.fromTo("#tr-tabs .tour-box", { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: .45, ease: "power3.out" }, 7.08);
+tl.fromTo("#tr-tabs .tour-tag", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .4, ease: "power3.out" }, 7.18);
+tl.to("#tr-tabs > *", { opacity: 0, duration: .25 }, 10.584);
+tl.fromTo("#ch-0 > *", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: .5, stagger: .08, ease: "power3.out" }, 11.1);
+tl.to("#ch-0 > *", { opacity: 0, duration: .3 }, 13.95);
+tl.fromTo("#ch-1 > *", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: .5, stagger: .08, ease: "power3.out" }, 27.4);
+tl.to("#ch-1 > *", { opacity: 0, duration: .3 }, 30.25);
+tl.fromTo("#ch-2 > *", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: .5, stagger: .08, ease: "power3.out" }, 54.133);
+tl.to("#ch-2 > *", { opacity: 0, duration: .3 }, 56.983);
+tl.fromTo("#ch-3 > *", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: .5, stagger: .08, ease: "power3.out" }, 84.4);
+tl.to("#ch-3 > *", { opacity: 0, duration: .3 }, 87.25);
+tl.fromTo("#ch-4 > *", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: .5, stagger: .08, ease: "power3.out" }, 108.867);
+tl.to("#ch-4 > *", { opacity: 0, duration: .3 }, 111.717);
+tl.fromTo("#bd-b01 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 11.183);
+tl.to("#bd-b01 > *", { opacity: 0, duration: .25 }, 15.287);
+tl.fromTo("#bd-b02 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 27.517);
+tl.to("#bd-b02 > *", { opacity: 0, duration: .25 }, 32.887);
+tl.fromTo("#bd-b03 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 41.917);
+tl.to("#bd-b03 > *", { opacity: 0, duration: .25 }, 46.653);
+tl.fromTo("#bd-b04 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 54.25);
+tl.to("#bd-b04 > *", { opacity: 0, duration: .25 }, 58.353);
+tl.fromTo("#bd-b05 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 65.883);
+tl.to("#bd-b05 > *", { opacity: 0, duration: .25 }, 68.62);
+tl.fromTo("#bd-b06 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 74.783);
+tl.to("#bd-b06 > *", { opacity: 0, duration: .25 }, 77.287);
+tl.fromTo("#bd-b07 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 85.417);
+tl.to("#bd-b07 > *", { opacity: 0, duration: .25 }, 88.62);
+tl.fromTo("#bd-b08 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 98.083);
+tl.to("#bd-b08 > *", { opacity: 0, duration: .25 }, 102.32);
+tl.fromTo("#bd-b09 > *", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .4, stagger: .06, ease: "power3.out" }, 109.883);
+tl.to("#bd-b09 > *", { opacity: 0, duration: .25 }, 115.02);
+tl.fromTo("#st-cam", { scale: 1 }, { scale: 1.6, duration: .9, ease: "power3.inOut" }, 15.617);
+tl.to("#st-cam", { scale: 1, duration: .9, ease: "power3.inOut" }, 23.627);
+tl.fromTo("#lt-prisma > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, stagger: .07, ease: "power3.out" }, 14.167);
+tl.to("#lt-prisma > *", { opacity: 0, duration: .25 }, 17.267);
+tl.fromTo("#lt-lib > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, stagger: .07, ease: "power3.out" }, 59.533);
+tl.to("#lt-lib > *", { opacity: 0, duration: .25 }, 62.833);
+tl.fromTo("#lt-undo > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, stagger: .07, ease: "power3.out" }, 70.6);
+tl.to("#lt-undo > *", { opacity: 0, duration: .25 }, 73.1);
+tl.fromTo("#lt-rapier > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, stagger: .07, ease: "power3.out" }, 89.2);
+tl.to("#lt-rapier > *", { opacity: 0, duration: .25 }, 93.1);
+tl.fromTo("#lt-exp > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, stagger: .07, ease: "power3.out" }, 114.75);
+tl.to("#lt-exp > *", { opacity: 0, duration: .25 }, 117.75);
+tl.fromTo("#lt-file > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, stagger: .07, ease: "power3.out" }, 118.6);
+tl.to("#lt-file > *", { opacity: 0, duration: .25 }, 122.033);
+tl.fromTo("#pip-in", { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .6, ease: "power3.out" }, 118.4);
+
+window.__timelines["studio"] = tl;
+</script>
+</template>

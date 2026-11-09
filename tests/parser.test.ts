@@ -64,6 +64,8 @@ export const CASES: Case[] = [
   ['hinglish', 'Stone bridge wapas banao', [{ action: 'REPAIR_STRUCTURE', target: { type: 'bridge' }, material: 'stone' }]],
   ['hindi', 'पुल वापस बनाओ', [{ action: 'REPAIR_STRUCTURE', target: { type: 'bridge' } }]],
   ['hinglish', 'wapas karo', [{ action: 'UNDO' }]],
+  ['hinglish', 'Temple ko laal karo', [{ action: 'MODIFY_OBJECT', target: { type: 'temple' }, color: 'red' }]],
+  ['english', 'Make the bridge stone.', [{ action: 'MODIFY_OBJECT', target: { type: 'bridge' }, material: 'stone' }]],
   ['hinglish', 'bahut saare ped lagao', [{ action: 'BATCH_CREATE', objectType: 'tree', count: 15 }]],
   ['hinglish', 'isko neela karo', [{ action: 'MODIFY_OBJECT', target: { ref: 'last' }, color: 'blue' }]],
   ['hinglish', 'raat karo aur barish shuru karo', [{ action: 'SET_TIME_OF_DAY', time: 'night' }, { action: 'SET_WEATHER', weather: 'rain' }]],

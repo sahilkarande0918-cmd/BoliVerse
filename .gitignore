@@ -11,3 +11,10 @@ playwright-report
 
 .vercel
 .env*
+
+# demo-film production: raw captures and big media stay local (scripts + compositions are tracked)
+video-production/gnani-official-demo/raw/
+video-production/gnani-official-demo/film/assets/media/*.mp4
+video-production/gnani-official-demo/film/renders/
+video-production/gnani-official-demo/film/.hyperframes/
+deliverables/*.mp4

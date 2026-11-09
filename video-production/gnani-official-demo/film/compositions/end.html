@@ -1,0 +1,19 @@
+<template>
+<style>@font-face{font-family:'Jost';src:url('assets/fonts/jost.woff2') format('woff2');font-weight:300 600}
+@font-face{font-family:'Noto Sans Devanagari';src:url('assets/fonts/noto-devanagari.woff2') format('woff2');font-weight:300 600}
+#root{position:absolute;inset:0;--bg:#e7e0d8;--panel:#f2ede7;--ink:#34302d;--muted:#5c534d;--faint:#6f665f;--line:rgba(52,48,45,.16);font-family:'Jost','Noto Sans Devanagari',sans-serif;color:var(--ink);overflow:hidden}
+#root{background:var(--bg)}#en-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:190px}
+#en-title{font-size:92px;font-weight:500;letter-spacing:-.02em;margin-top:8px}#en-line{font-size:32px;font-weight:300;color:var(--muted)}
+#en-rule{width:520px;height:1px;background:var(--line);margin:28px 0 20px}#en-meta{font-size:28px;text-align:center;line-height:1.55}
+#en-cred{position:absolute;bottom:70px;left:0;right:0;text-align:center;font-size:24px;color:var(--muted);line-height:1.6}</style>
+<div id="root" data-composition-id="end" data-width="1920" data-height="1080" data-duration="8.367">
+<div id="en-in" class="clip" data-hold="credits need reading time" data-start="0" data-duration="8.367"><div id="en-mark"><svg width="96" height="96" viewBox="0 0 64 64"><path d="M16 54V30a16 16 0 0 1 32 0v24" fill="none" stroke="#34302D" stroke-width="3.5"/><circle cx="32" cy="40" r="3.5" fill="#34302D"/></svg></div><div id="en-title">BoliVerse</div><div id="en-line">Your words, your world.</div><div id="en-rule"></div>
+<div id="en-meta"><div>boliverse.vercel.app</div><div>github.com/sahilkarande0918-cmd/BoliVerse</div></div>
+<div id="en-cred">Speech: Gnani Prisma v3.0 · Voices: Gnani Timbre v3.0 (synthetic) · Three.js · Rapier · Built by Sahil Karande &amp; Purvesh Mhatre<br>Gnani AI · Great Indian AI Internship Challenge · #GnaniAI #GreatIndianAIInternshipChallenge</div></div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+tl.fromTo("#en-in > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .6, stagger: .09, ease: "power3.out" }, 0.15);
+window.__timelines["end"] = tl;
+</script>
+</template>

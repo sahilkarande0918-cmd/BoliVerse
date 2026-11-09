@@ -3,7 +3,7 @@
 ## Done and verified
 - Gnani Prisma v3.0 STT via `/api/stt` (local + production; Hindi, Marathi, code-mixed transcripts confirmed). Timbre TTS works (`bitrate:"64k"`).
 - Groq fallback planner live; Zod validation + safe optional-field repair.
-- Local multilingual parser; **87/87 Vitest tests pass** (incl. 8 real Prisma transcripts, mansion, props, safety cases).
+- Local multilingual parser; **89/89 Vitest tests pass** (incl. 8 real Prisma transcripts, mansion, props, safety cases).
 - Village / river / bridge / edit / destroy (Rapier debris, wood floats, stone sinks) / rebuild / traversal graph; building rubble for any destroyed structure.
 - Luxury mansion with interior slots, decor, pool; scanned CC0 furniture with procedural fallback (code done; live load not visually verified).
 - Undo/redo, IndexedDB save/load, JSON import/export, screenshot, frame-exact MP4 export (verified playable 1280×720).
@@ -15,11 +15,12 @@
 - **Ultra preset**: re-verified 9 Nov 2026. Day, sunset, sunrise, rain and night captures render correctly (`docs/realism/ultra-*.jpg`).
 - Sun glare on the river at sunset and the clouds are visible in the Ultra captures and the new film. The god-ray shafts are subtle.
 - Water reflector: verified in the Ultra captures (bridge and tree reflections).
-- Open-vocabulary props (`library.ts`/`Props.tsx`): parser-tested; live Poly Haven load in browser not visually verified.
+- Open-vocabulary props: verified live in the official demo ("Put a wooden bench near the temple" → scanned Painted Wooden Bench with textures). Fixed 9 Nov: texture URLs were not mapped (all scanned models loaded untextured) and the material word now joins the search.
 - Demo film **re-rendered at Ultra quality** (62.2 s, 1080p, 47.1 MB, all 7 lines transcribed live by Prisma).
 - Realism docs written: `docs/REALISM_AUDIT.md`, `docs/RENDERING_DECISIONS.md`, `docs/ASSET_LICENSES.md` (the root ASSETS_LICENSES.md was removed).
 
 ## Known bugs / gaps
+- FIXED: "Temple ko laal karo" / "make the temple red" now recolours the existing object (colour/material word after the noun = edit).
 - FIXED: "wapas banao" / "वापस बनाओ" / "परत बांधा" now means rebuild (REPAIR_STRUCTURE); "wapas karo" is still UNDO.
 - p95 frame spikes (~90–120 ms) at High/Ultra, likely first-use shader compiles.
 - Hero/landing uses Medium-like settings without post-processing (intentional for scroll smoothness).

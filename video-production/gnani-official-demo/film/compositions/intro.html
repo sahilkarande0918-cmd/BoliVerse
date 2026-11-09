@@ -1,0 +1,26 @@
+<template>
+<style>@font-face{font-family:'Jost';src:url('assets/fonts/jost.woff2') format('woff2');font-weight:300 600}
+@font-face{font-family:'Noto Sans Devanagari';src:url('assets/fonts/noto-devanagari.woff2') format('woff2');font-weight:300 600}
+#root{position:absolute;inset:0;--bg:#e7e0d8;--panel:#f2ede7;--ink:#34302d;--muted:#5c534d;--faint:#6f665f;--line:rgba(52,48,45,.16);font-family:'Jost','Noto Sans Devanagari',sans-serif;color:var(--ink);overflow:hidden}
+.vp{position:absolute;inset:0;transform-origin:980px 536px}.vp video{position:absolute;inset:0;width:1920px;height:1080px}
+#in-title{position:absolute;inset:0;background:var(--bg)}#in-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+#in-word{font-size:96px;font-weight:500;letter-spacing:-.02em}#in-line{font-size:30px;font-weight:300;color:var(--muted);margin-top:6px}</style>
+<div id="root" data-composition-id="intro" data-width="1920" data-height="1080" data-duration="6.9">
+<div id="in-c0" style="position:absolute;inset:0"><div id="in-w0" class="vp"><video id="in-v0" class="clip" data-start="0" data-duration="0.95" data-media-start="49.433" src="assets/media/studio.mp4" muted playsinline></video></div></div>
+<div id="in-c1" style="position:absolute;inset:0"><div id="in-w1" class="vp"><video id="in-v1" class="clip" data-start="0.95" data-duration="0.95" data-media-start="81.067" src="assets/media/studio.mp4" muted playsinline></video></div></div>
+<div id="in-c2" style="position:absolute;inset:0"><div id="in-w2" class="vp"><video id="in-v2" class="clip" data-start="1.9" data-duration="0.95" data-media-start="90.8" src="assets/media/studio.mp4" muted playsinline></video></div></div>
+<div id="in-c3" style="position:absolute;inset:0"><div id="in-w3" class="vp"><video id="in-v3" class="clip" data-start="2.85" data-duration="0.95" data-media-start="106.4" src="assets/media/studio.mp4" muted playsinline></video></div></div>
+<div id="in-title" class="clip" data-start="3.8" data-duration="3.1"><div id="in-inner"><div id="in-mark"><svg width="132" height="132" viewBox="0 0 64 64"><path d="M16 54V30a16 16 0 0 1 32 0v24" fill="none" stroke="#34302D" stroke-width="3.5"/><circle cx="32" cy="40" r="3.5" fill="#34302D"/></svg></div><div id="in-word">boliverse</div><div id="in-line">Speak a world into existence.</div></div></div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+tl.fromTo("#in-w0", { scale: 1.55 }, { scale: 1.62, duration: 0.95, ease: "none" }, 0);
+tl.fromTo("#in-w1", { scale: 1.55 }, { scale: 1.62, duration: 0.95, ease: "none" }, 0.95);
+tl.fromTo("#in-w2", { scale: 1.55 }, { scale: 1.62, duration: 0.95, ease: "none" }, 1.9);
+tl.fromTo("#in-w3", { scale: 1.55 }, { scale: 1.62, duration: 0.95, ease: "none" }, 2.85);
+tl.fromTo("#in-mark", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 3.9499999999999997);
+tl.fromTo("#in-word", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 4.25);
+tl.fromTo("#in-line", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 4.7);
+window.__timelines["intro"] = tl;
+</script>
+</template>

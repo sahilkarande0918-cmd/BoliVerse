@@ -1,0 +1,17 @@
+<template>
+<style>@font-face{font-family:'Jost';src:url('assets/fonts/jost.woff2') format('woff2');font-weight:300 600}
+@font-face{font-family:'Noto Sans Devanagari';src:url('assets/fonts/noto-devanagari.woff2') format('woff2');font-weight:300 600}
+#root{position:absolute;inset:0;--bg:#e7e0d8;--panel:#f2ede7;--ink:#34302d;--muted:#5c534d;--faint:#6f665f;--line:rgba(52,48,45,.16);font-family:'Jost','Noto Sans Devanagari',sans-serif;color:var(--ink);overflow:hidden}
+#ld-tag{position:absolute;left:64px;bottom:64px;display:flex;gap:16px;align-items:baseline;background:rgba(242,237,231,.94);padding:14px 22px;border:1px solid var(--line);font-size:26px}
+.ey{font-size:20px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}</style>
+<div id="root" data-composition-id="landing" data-width="1920" data-height="1080" data-duration="13.6">
+<video id="ld-v" class="clip" data-start="0" data-duration="13.6" src="assets/media/landing.mp4" muted playsinline style="position:absolute;inset:0;width:1920px;height:1080px"></video>
+<div id="ld-tag" class="clip" data-start="0.6" data-duration="12.4"><span class="ey">Live site</span><span>boliverse.vercel.app</span></div>
+</div>
+<script>
+const tl = gsap.timeline({ paused: true });
+tl.fromTo("#ld-tag > *", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .5, stagger: .08, ease: "power3.out" }, 0.6);
+tl.to("#ld-tag > *", { opacity: 0, duration: .3 }, 12);
+window.__timelines["landing"] = tl;
+</script>
+</template>
