@@ -37,8 +37,9 @@ export default {
     }
     const body = await res.json().catch(() => ({}))
     if (!res.ok || body.success === false) {
-      const msg = body?.error?.message ?? body?.detail?.message ?? (Array.isArray(body?.detail) ? 'Invalid request' : `Gnani error ${res.status}`)
-      const code = res.status === 402 ? 'NO_CREDIT' : res.status === 429 ? 'RATE_LIMIT' : body?.error?.type ?? 'UPSTREAM'
+      const raw = body?.error?.message ?? body?.detail?.message ?? body?.error ?? (Array.isArray(body?.detail) ? 'Invalid request' : `Gnani error ${res.status}`)
+      const msg = String(raw).split('\n')[0].slice(0, 160) // never forward upstream stack/tool dumps
+      const code = res.status === 402 ? 'NO_CREDIT' : res.status === 429 ? 'RATE_LIMIT' : body?.error?.type ?? body?.code ?? 'UPSTREAM'
       return json({ error: msg, code }, res.status === 401 ? 502 : res.status)
     }
     return json({
